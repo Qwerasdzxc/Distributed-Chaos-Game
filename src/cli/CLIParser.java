@@ -6,10 +6,7 @@ import java.util.Scanner;
 
 import app.AppConfig;
 import app.Cancellable;
-import cli.command.CLICommand;
-import cli.command.InfoCommand;
-import cli.command.PauseCommand;
-import cli.command.StopCommand;
+import cli.command.*;
 import servent.SimpleServentListener;
 
 /**
@@ -35,21 +32,24 @@ public class CLIParser implements Runnable, Cancellable {
 	private volatile boolean working = true;
 	
 	private final List<CLICommand> commandList;
+
+	private Scanner scanner;
 	
 	public CLIParser(SimpleServentListener listener) {
 		this.commandList = new ArrayList<>();
 		
 		commandList.add(new InfoCommand());
 		commandList.add(new PauseCommand());
+		commandList.add(new StartCommand(this));
 		commandList.add(new StopCommand(this, listener));
 	}
 	
 	@Override
 	public void run() {
-		Scanner sc = new Scanner(System.in);
+		scanner = new Scanner(System.in);
 		
 		while (working) {
-			String commandLine = sc.nextLine();
+			String commandLine = scanner.nextLine();
 			
 			int spacePos = commandLine.indexOf(" ");
 			
@@ -76,10 +76,14 @@ public class CLIParser implements Runnable, Cancellable {
 				AppConfig.timestampedErrorPrint("Unknown command: " + commandName);
 			}
 		}
-		
-		sc.close();
+
+		scanner.close();
 	}
-	
+
+	public Scanner getScanner() {
+		return scanner;
+	}
+
 	@Override
 	public void stop() {
 		this.working = false;

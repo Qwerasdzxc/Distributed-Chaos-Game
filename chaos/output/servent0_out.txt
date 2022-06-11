@@ -1,4 +1,9 @@
-21:27:01 - Starting servent [localhost|1000]
-21:27:01 - Pausing for 5000 ms
-21:27:01 - First node in Chaos system.
-21:27:06 - Stopping...
+00:14:39 - [Job{name='test', n=3, width=400, height=400, proportion=0.5, positions=[(250, 350), (250, 100), (100, 250)]}]
+00:14:39 - Starting servent [localhost|1000]
+00:14:39 - Pausing for 3000 ms
+00:14:39 - First node in Chaos system.
+00:14:42 - Starting job: Job{name='test', n=3, width=400, height=400, proportion=0.5, positions=[(250, 350), (250, 100), (100, 250)]}
+00:14:42 - Executing job: test
+00:15:02 - Stopping job: test
+00:15:02 - Fractal image rendered.
+00:15:02 - Stopping...

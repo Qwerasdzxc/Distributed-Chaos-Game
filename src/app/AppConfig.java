@@ -1,5 +1,7 @@
 package app;
 
+import app.models.Job;
+import app.models.Point;
 import app.models.ServentInfo;
 
 import java.io.File;
@@ -7,7 +9,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -126,6 +130,36 @@ public class AppConfig {
 			myServentInfo = new ServentInfo(ip, port);
 		} catch (NumberFormatException e) {
 			timestampedErrorPrint("Problem reading port. Exiting...");
+			System.exit(0);
+		}
+
+		try {
+			int jobCount = Integer.parseInt(properties.getProperty("job_count"));
+
+			for (int i = 0; i < jobCount; i++) {
+				String name = properties.getProperty("job." + i + ".name");
+
+				int n = Integer.parseInt(properties.getProperty("job." + i + ".n"));
+				double proportion = Double.parseDouble(properties.getProperty("job." + i + ".proportion"));
+				int width = Integer.parseInt(properties.getProperty("job." + i + ".width"));
+				int height = Integer.parseInt(properties.getProperty("job." + i + ".height"));
+
+				List<Point> positions = new ArrayList<>();
+
+				for (int j = 0; j < n; j++) {
+					String[] coordinates = properties.getProperty("job." + i + ".position." + j).split(",");
+					int x = Integer.parseInt(coordinates[0]);
+					int y = Integer.parseInt(coordinates[1]);
+
+					positions.add(new Point(x, y));
+				}
+
+				myServentInfo.addJob(new Job(name, n, width, height, proportion, positions));
+			}
+
+			timestampedStandardPrint(myServentInfo.getJobs().toString());
+		} catch (NumberFormatException e) {
+			timestampedErrorPrint("Problem reading jobs. Exiting...");
 			System.exit(0);
 		}
 	}
