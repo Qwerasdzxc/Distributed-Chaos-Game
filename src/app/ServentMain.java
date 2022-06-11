@@ -16,23 +16,15 @@ public class ServentMain {
 	 * 1 - this servent's id
 	 */
 	public static void main(String[] args) {
-		if (args.length != 2) {
-			AppConfig.timestampedErrorPrint("Please provide servent list file and id of this servent.");
+		if (args.length != 1) {
+			AppConfig.timestampedErrorPrint("Please provide servent list file.");
 		}
 		
-		int serventId = -1;
 		int portNumber = -1;
 		
 		String serventListFile = args[0];
 		
-		try {
-			serventId = Integer.parseInt(args[1]);
-		} catch (NumberFormatException e) {
-			AppConfig.timestampedErrorPrint("Second argument should be an int. Exiting...");
-			System.exit(0);
-		}
-		
-		AppConfig.readBsConfig(serventListFile);
+		AppConfig.readServentConfig(serventListFile);
 		
 		try {
 			portNumber = AppConfig.myServentInfo.getListenerPort();

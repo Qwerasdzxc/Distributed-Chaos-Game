@@ -13,7 +13,7 @@ import java.util.Scanner;
 public class BootstrapServer {
 
 	private volatile boolean working = true;
-	private List<Integer> activeServents;
+	private final List<Integer> activeServents;
 	
 	private class CLIWorker implements Runnable {
 		@Override

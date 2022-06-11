@@ -1,0 +1,4 @@
+21:27:01 - Starting servent [localhost|1000]
+21:27:01 - Pausing for 5000 ms
+21:27:01 - First node in Chaos system.
+21:27:06 - Stopping...

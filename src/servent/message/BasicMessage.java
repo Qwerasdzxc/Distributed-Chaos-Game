@@ -3,8 +3,6 @@ package servent.message;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import app.ChordState;
-
 /**
  * A default message implementation. This should cover most situations.
  * If you want to add stuff, remember to think about the modificator methods.
@@ -103,9 +101,9 @@ public class BasicMessage implements Message {
 	 */
 	@Override
 	public String toString() {
-		return "[" + ChordState.chordHash(getSenderPort()) + "|" + getSenderPort() + "|" + getMessageId() + "|" +
+		return "[" + getSenderPort() + "|" + getMessageId() + "|" +
 					getMessageText() + "|" + getMessageType() + "|" +
-					getReceiverPort() + "|" + ChordState.chordHash(getReceiverPort()) + "]";
+					getReceiverPort() + "]";
 	}
 
 }
