@@ -51,7 +51,7 @@ public class SimpleServentListener implements Runnable, Cancellable {
 				clientMessage = MessageUtil.readMessage(clientSocket);
 				
 				MessageHandler messageHandler = new NullHandler(clientMessage);
-				
+
 				/*
 				 * Each message type has it's own handler.
 				 * If we can get away with stateless handlers, we will,
@@ -66,6 +66,9 @@ public class SimpleServentListener implements Runnable, Cancellable {
 					break;
 				case NODE_JOINED:
 					messageHandler = new NodeJoinedHandler(clientMessage);
+					break;
+				case EXECUTE_JOB:
+					messageHandler = new ExecuteJobHandler(clientMessage);
 					break;
 				}
 				

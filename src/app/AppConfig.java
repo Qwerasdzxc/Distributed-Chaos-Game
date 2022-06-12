@@ -3,6 +3,7 @@ package app;
 import app.models.Job;
 import app.models.Point;
 import app.models.ServentInfo;
+import app.workers.JobExecutionWorker;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,6 +30,11 @@ public class AppConfig {
 	 * Currently active nodes in system
 	 */
 	public static List<ServentInfo> activeNodes;
+
+	/**
+	 * Currently active job worker in our node
+	 */
+	public static JobExecutionWorker activeJobWorker;
 	
 	/**
 	 * Print a message to stdout with a timestamp

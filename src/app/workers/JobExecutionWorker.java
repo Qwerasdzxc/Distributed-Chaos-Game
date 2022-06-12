@@ -15,10 +15,12 @@ public class JobExecutionWorker implements Runnable, Cancellable {
 
     private boolean working;
 
+    private final List<Point> assignedStartingPoints;
     private final List<Point> calculatedPoints;
 
-    public JobExecutionWorker(Job job) {
+    public JobExecutionWorker(Job job, List<Point> assignedStartingPoints) {
         this.job = job;
+        this.assignedStartingPoints = assignedStartingPoints;
         this.working = true;
         this.calculatedPoints = new ArrayList<>();
     }
@@ -55,7 +57,7 @@ public class JobExecutionWorker implements Runnable, Cancellable {
 
         Point lastPoint = calculatedPoints.get(calculatedPoints.size() - 1);
 
-        Point referencePoint = job.getPositions().get(random.nextInt(job.getPositions().size()));
+        Point referencePoint = assignedStartingPoints.get(random.nextInt(assignedStartingPoints.size()));
         int x = referencePoint.getX();
         int y = referencePoint.getY();
 

@@ -1,2 +1,4 @@
-pause 150000
+pause 20000
+start test
+pause 60000
 stop

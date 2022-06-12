@@ -1,7 +1,5 @@
-13:34:05 - Bootstrap server started on port: 4000
-13:34:07 - got 1000 on IP localhost
-13:34:07 - adding 1000 on IP localhost
-13:34:12 - got 1100 on IP localhost
-13:34:14 - adding 1100 on IP localhost
-13:34:18 - got 1200 on IP localhost
-13:34:19 - adding 1200 on IP localhost
+17:17:19 - Bootstrap server started on port: 4000
+17:17:22 - got 1000 on IP localhost
+17:17:22 - adding 1000 on IP localhost
+17:17:27 - got 1100 on IP localhost
+17:17:29 - adding 1100 on IP localhost

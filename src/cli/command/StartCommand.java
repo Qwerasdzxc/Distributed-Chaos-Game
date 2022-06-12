@@ -3,8 +3,11 @@ package cli.command;
 import app.AppConfig;
 import app.models.Job;
 import app.models.Point;
+import app.models.ServentInfo;
 import app.workers.JobExecutionWorker;
 import cli.CLIParser;
+import servent.message.ExecuteJobMessage;
+import servent.message.util.MessageUtil;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -12,6 +15,7 @@ import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
@@ -31,6 +35,8 @@ public class StartCommand implements CLICommand {
     @Override
     public void execute(String args) {
         Job job;
+
+
 
         if (args != null) {
             job = AppConfig.myServentInfo.getJob(args);
@@ -79,45 +85,95 @@ public class StartCommand implements CLICommand {
             job = new Job(name, n, width, height, proportion, positions);
         }
 
-        AppConfig.timestampedStandardPrint("Starting job: " + job);
+        int nodeCountForJob = getNeededNodeCountForJob(AppConfig.activeNodes.size(), job.getN());
+        AppConfig.timestampedStandardPrint("We will use " + nodeCountForJob + " nodes for this job.");
 
-        JobExecutionWorker jobExecutionWorker = new JobExecutionWorker(job);
-        Thread jobExecution = new Thread(jobExecutionWorker);
-        jobExecution.start();
+        ServentInfo me = AppConfig.myServentInfo;
 
-        try {
-            Thread.sleep(20000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if (nodeCountForJob < AppConfig.activeNodes.size() || nodeCountForJob == 1) {
+            ExecuteJobMessage executeJobMessage = new ExecuteJobMessage(me.getListenerPort(), me.getListenerPort(),
+                    me.getIpAddress(), me.getIpAddress(), job, job.getPositions());
+
+            MessageUtil.sendMessage(executeJobMessage);
+            return;
         }
 
-        jobExecutionWorker.stop();
-        renderImage(job, jobExecutionWorker.getCalculatedPoints());
-    }
+        for (int i = 0; i < job.getN(); i++) {
+            ServentInfo workerNode = AppConfig.activeNodes.get(i);
+            List<Point> fractalPoints = new ArrayList<>();
 
-    public static void renderImage(Job job, List<Point> points) {
-        BufferedImage image = new BufferedImage(job.getWidth(), job.getHeight(), BufferedImage.TYPE_3BYTE_BGR);
-        WritableRaster writableRaster = image.getRaster();
-        int[] rgb = new int[3];
-        rgb[0] = 255;
-        for (Point point : points) {
-            writableRaster.setPixel(point.getX(), point.getY(), rgb);
-        }
+            Point startPoint = job.getPositions().get(i);
+            for (int j = 0; j < job.getN(); j++) {
+                if (i == j) {
+                    fractalPoints.add(startPoint);
+                    continue;
+                }
 
-        BufferedImage newImage = new BufferedImage(writableRaster.getWidth(), writableRaster.getHeight(),
-                BufferedImage.TYPE_3BYTE_BGR);
-        newImage.setData(writableRaster);
-        try {
-            File file = new File("chaos/fractals/" + job.getName() + "_" + job.getProportion() + ".png");
-            if (!file.getParentFile().exists()) {
-                file.getParentFile().mkdirs();
+                int x = startPoint.getX();
+                int y = startPoint.getY();
+
+                double proportionalX = x + job.getProportion() * (job.getPositions().get(j).getX() - x);
+                double proportionalY = y + job.getProportion() * (job.getPositions().get(j).getY() - y);
+
+                fractalPoints.add(new Point((int) proportionalX, (int) proportionalY));
             }
 
-            file.createNewFile();
-            ImageIO.write(newImage, "PNG", file);
-        } catch (IOException e) {
-            AppConfig.timestampedErrorPrint(e.getMessage());
-            e.printStackTrace();
+            ExecuteJobMessage executeJobMessage = new ExecuteJobMessage(me.getListenerPort(), workerNode.getListenerPort(),
+                    me.getIpAddress(), workerNode.getIpAddress(), job, fractalPoints);
+
+            MessageUtil.sendMessage(executeJobMessage);
         }
     }
+
+    private int getNeededNodeCountForJob(int nodeCount, int n) {
+        int result = 1;
+        int x = 0;
+
+        while (true) {
+            int possibleNodeCount = 1 + x * (n - 1);
+            if (possibleNodeCount > nodeCount) {
+                break;
+            }
+            result = possibleNodeCount;
+            x++;
+        }
+
+        return result;
+    }
+
+//    private List<String> computeFractalIds(int nodesCount, int pointsCount) {
+//        List<String> fractalIds = new ArrayList<>();
+//        int length = 0;
+//        String base = "";
+//
+//        while (nodesCount > 0) {
+//            if (length >= 1) {
+//                boolean hasLength = false;
+//                for (String fractalId: fractalIds) {
+//                    if (fractalId.length() == length) {
+//                        base = fractalId;
+//                        fractalIds.remove(fractalId);
+//                        hasLength = true;
+//                        break;
+//                    }
+//                }
+//                if (!hasLength) {
+//                    length++;
+//                    continue;
+//                }
+//
+//                nodesCount++;
+//            }
+//
+//            for (int i = 0; i < pointsCount; i++) {
+//                fractalIds.add(base + i);
+//            }
+//            if (length == 0) {
+//                length++;
+//            }
+//            nodesCount -= pointsCount;
+//        }
+//        Collections.sort(fractalIds);
+//        return fractalIds;
+//    }
 }
