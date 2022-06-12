@@ -36,8 +36,6 @@ public class StartCommand implements CLICommand {
     public void execute(String args) {
         Job job;
 
-
-
         if (args != null) {
             job = AppConfig.myServentInfo.getJob(args);
 

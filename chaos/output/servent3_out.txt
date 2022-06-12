@@ -1,0 +1,10 @@
+17:28:26 - Starting servent [localhost|1300]
+17:28:26 - Pausing for 600000 ms
+17:28:27 - Sending message [1300|0||NEW_NODE|1100]
+17:28:28 - Got message [1100|5||WELCOME|1300]
+17:28:28 - Current active nodes: [[localhost|1000], [localhost|1100], [localhost|1200], [localhost|1300]]
+17:28:32 - Got message [1000|4||EXECUTE_JOB|1300]
+17:28:32 - Starting job: Job{name='square', n=4, width=400, height=400, proportion=0.3, positions=[(0, 0), (0, 400), (400, 0), (400, 400)]}
+17:28:32 - Executing job: square
+17:28:47 - Stopping job: square
+17:28:47 - Stopping job: Job{name='square', n=4, width=400, height=400, proportion=0.3, positions=[(0, 0), (0, 400), (400, 0), (400, 400)]}

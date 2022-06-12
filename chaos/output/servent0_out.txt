@@ -1,15 +1,21 @@
-17:17:22 - Starting servent [localhost|1000]
-17:17:22 - Pausing for 20000 ms
-17:17:22 - First node in Chaos system.
-17:17:28 - Got message [1100|0||NEW_NODE|1000]
-17:17:28 - Current active nodes: [[localhost|1000], [localhost|1100]]
-17:17:29 - Sending message [1000|0||WELCOME|1100]
-17:17:42 - We will use 1 nodes for this job.
-17:17:42 - Pausing for 60000 ms
-17:17:43 - Sending message [1000|1||EXECUTE_JOB|1000]
-17:17:43 - Got message [1000|1||EXECUTE_JOB|1000]
-17:17:43 - Starting job: Job{name='test', n=3, width=400, height=400, proportion=0.5, positions=[(250, 350), (250, 100), (100, 250)]}
-17:17:43 - Executing job: test
-17:17:58 - Stopping job: test
-17:17:58 - Stopping job: Job{name='test', n=3, width=400, height=400, proportion=0.5, positions=[(250, 350), (250, 100), (100, 250)]}
-17:18:42 - Stopping...
+17:28:11 - Starting servent [localhost|1000]
+17:28:11 - Pausing for 20000 ms
+17:28:11 - First node in Chaos system.
+17:28:17 - Got message [1100|0||NEW_NODE|1000]
+17:28:17 - Current active nodes: [[localhost|1000], [localhost|1100]]
+17:28:17 - Sending message [1000|0||WELCOME|1100]
+17:28:22 - Got message [1100|1||NODE_JOINED|1000]
+17:28:22 - Current active nodes: [[localhost|1000], [localhost|1100], [localhost|1200]]
+17:28:28 - Got message [1100|3||NODE_JOINED|1000]
+17:28:28 - Current active nodes: [[localhost|1000], [localhost|1100], [localhost|1200], [localhost|1300]]
+17:28:31 - We will use 4 nodes for this job.
+17:28:31 - Pausing for 60000 ms
+17:28:31 - Sending message [1000|3||EXECUTE_JOB|1200]
+17:28:32 - Sending message [1000|4||EXECUTE_JOB|1300]
+17:28:32 - Sending message [1000|2||EXECUTE_JOB|1100]
+17:28:32 - Sending message [1000|1||EXECUTE_JOB|1000]
+17:28:32 - Got message [1000|1||EXECUTE_JOB|1000]
+17:28:32 - Starting job: Job{name='square', n=4, width=400, height=400, proportion=0.3, positions=[(0, 0), (0, 400), (400, 0), (400, 400)]}
+17:28:32 - Executing job: square
+17:28:47 - Stopping job: square
+17:28:47 - Stopping job: Job{name='square', n=4, width=400, height=400, proportion=0.3, positions=[(0, 0), (0, 400), (400, 0), (400, 400)]}
