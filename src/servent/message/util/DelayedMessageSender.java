@@ -2,6 +2,8 @@ package servent.message.util;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.Socket;
 
 import app.AppConfig;
@@ -46,6 +48,11 @@ public class DelayedMessageSender implements Runnable {
 			
 			sendSocket.close();
 		} catch (IOException e) {
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			e.printStackTrace(pw);
+			AppConfig.timestampedErrorPrint(sw.toString());
+
 			AppConfig.timestampedErrorPrint("Couldn't send message: " + messageToSend.toString());
 		}
 	}

@@ -16,25 +16,33 @@ public class BasicMessage implements Message {
 	private final MessageType type;
 	private final int senderPort;
 	private final int receiverPort;
+
+	private final String senderIpAddress;
+	private final String receiverIpAddress;
+
 	private final String messageText;
 	
 	//This gives us a unique id - incremented in every natural constructor.
 	private static AtomicInteger messageCounter = new AtomicInteger(0);
 	private final int messageId;
 	
-	public BasicMessage(MessageType type, int senderPort, int receiverPort) {
+	public BasicMessage(MessageType type, int senderPort, int receiverPort, String senderIpAddress, String receiverIpAddress) {
 		this.type = type;
 		this.senderPort = senderPort;
 		this.receiverPort = receiverPort;
+		this.senderIpAddress = senderIpAddress;
+		this.receiverIpAddress = receiverIpAddress;
 		this.messageText = "";
 		
 		this.messageId = messageCounter.getAndIncrement();
 	}
 	
-	public BasicMessage(MessageType type, int senderPort, int receiverPort, String messageText) {
+	public BasicMessage(MessageType type, int senderPort, int receiverPort, String senderIpAddress, String receiverIpAddress, String messageText) {
 		this.type = type;
 		this.senderPort = senderPort;
 		this.receiverPort = receiverPort;
+		this.senderIpAddress = senderIpAddress;
+		this.receiverIpAddress = receiverIpAddress;
 		this.messageText = messageText;
 		
 		this.messageId = messageCounter.getAndIncrement();
@@ -52,12 +60,17 @@ public class BasicMessage implements Message {
 	
 	@Override
 	public String getReceiverIpAddress() {
-		return "localhost";
+		return receiverIpAddress;
 	}
 	
 	@Override
 	public int getSenderPort() {
 		return senderPort;
+	}
+
+	@Override
+	public String getSenderIpAddress() {
+		return senderIpAddress;
 	}
 
 	@Override

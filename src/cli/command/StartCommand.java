@@ -115,7 +115,6 @@ public class StartCommand implements CLICommand {
 
             file.createNewFile();
             ImageIO.write(newImage, "PNG", file);
-            AppConfig.timestampedStandardPrint("Fractal image rendered.");
         } catch (IOException e) {
             AppConfig.timestampedErrorPrint(e.getMessage());
             e.printStackTrace();

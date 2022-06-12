@@ -9,10 +9,7 @@ import java.util.concurrent.Executors;
 
 import app.AppConfig;
 import app.Cancellable;
-import servent.handler.MessageHandler;
-import servent.handler.NewNodeHandler;
-import servent.handler.NullHandler;
-import servent.handler.WelcomeHandler;
+import servent.handler.*;
 import servent.message.Message;
 import servent.message.util.MessageUtil;
 
@@ -66,6 +63,9 @@ public class SimpleServentListener implements Runnable, Cancellable {
 					break;
 				case WELCOME:
 					messageHandler = new WelcomeHandler(clientMessage);
+					break;
+				case NODE_JOINED:
+					messageHandler = new NodeJoinedHandler(clientMessage);
 					break;
 				}
 				

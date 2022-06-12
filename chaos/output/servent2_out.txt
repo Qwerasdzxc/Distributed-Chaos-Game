@@ -1,0 +1,5 @@
+13:34:17 - Starting servent [localhost|1200]
+13:34:17 - Pausing for 600000 ms
+13:34:18 - Sending message [1200|0||NEW_NODE|1100]
+13:34:19 - Got message [1100|2||WELCOME|1200]
+13:34:19 - Current active nodes: [[localhost|1000], [localhost|1100], [localhost|1200]]

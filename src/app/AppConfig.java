@@ -7,12 +7,11 @@ import app.models.ServentInfo;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * This class contains all the global application configuration stuff.
@@ -25,6 +24,11 @@ public class AppConfig {
 	 * Convenience access for this servent's information
 	 */
 	public static ServentInfo myServentInfo;
+
+	/**
+	 * Currently active nodes in system
+	 */
+	public static List<ServentInfo> activeNodes;
 	
 	/**
 	 * Print a message to stdout with a timestamp
@@ -156,12 +160,28 @@ public class AppConfig {
 
 				myServentInfo.addJob(new Job(name, n, width, height, proportion, positions));
 			}
-
-			timestampedStandardPrint(myServentInfo.getJobs().toString());
 		} catch (NumberFormatException e) {
 			timestampedErrorPrint("Problem reading jobs. Exiting...");
 			System.exit(0);
 		}
+
+		activeNodes = new ArrayList<>();
 	}
-	
+
+	public static String sha256(final String base) {
+		try{
+			final MessageDigest digest = MessageDigest.getInstance("SHA-256");
+			final byte[] hash = digest.digest(base.getBytes(StandardCharsets.UTF_8));
+			final StringBuilder hexString = new StringBuilder();
+			for (byte b : hash) {
+				final String hex = Integer.toHexString(0xff & b);
+				if (hex.length() == 1)
+					hexString.append('0');
+				hexString.append(hex);
+			}
+			return hexString.toString();
+		} catch(Exception ex){
+			throw new RuntimeException(ex);
+		}
+	}
 }

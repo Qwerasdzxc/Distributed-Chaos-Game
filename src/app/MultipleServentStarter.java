@@ -72,6 +72,9 @@ public class MultipleServentStarter {
 
         Process bsProcess = null;
         ProcessBuilder bsBuilder = new ProcessBuilder("java", "-cp", "out/production/kids_2022_proj_luka_petrovic_rn3318", "app.BootstrapServer", String.valueOf(AppConfig.BOOTSTRAP_PORT));
+        bsBuilder.redirectOutput(new File(testName + "/output/bs_out.txt"));
+        bsBuilder.redirectError(new File(testName + "/error/bs_err.txt"));
+
         try {
             bsProcess = bsBuilder.start();
         } catch (IOException e1) {
@@ -85,7 +88,7 @@ public class MultipleServentStarter {
             e1.printStackTrace();
         }
 
-        int serventCount = 1;
+        int serventCount = 3;
 
         for (int i = 0; i < serventCount; i++) {
             try {
@@ -106,7 +109,7 @@ public class MultipleServentStarter {
                 e.printStackTrace();
             }
             try { //give each node 10s to start up
-                Thread.sleep(10000);
+                Thread.sleep(5000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

@@ -1,6 +1,10 @@
 package app.models;
 
-public class Point {
+import java.io.Serializable;
+
+public class Point implements Serializable {
+
+    private static final long serialVersionUID = 5304170042791281555L;
 
     private final int x;
     private final int y;

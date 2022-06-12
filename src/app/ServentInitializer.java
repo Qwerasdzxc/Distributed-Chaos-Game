@@ -6,48 +6,54 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
+import app.models.ServentInfo;
 import servent.message.NewNodeMessage;
 import servent.message.util.MessageUtil;
 
 public class ServentInitializer implements Runnable {
 
-	private int getSomeServentPort() {
+	private ServentInfo getSomeServentFromSystem() {
 		int bsPort = AppConfig.BOOTSTRAP_PORT;
-		
-		int retVal = -2;
-		
+
 		try {
 			Socket bsSocket = new Socket("localhost", bsPort);
 			
 			PrintWriter bsWriter = new PrintWriter(bsSocket.getOutputStream());
 			bsWriter.write("Hail\n" + AppConfig.myServentInfo.getListenerPort() + "\n");
+			bsWriter.write(AppConfig.myServentInfo.getIpAddress() + "\n");
 			bsWriter.flush();
 			
 			Scanner bsScanner = new Scanner(bsSocket.getInputStream());
-			retVal = bsScanner.nextInt();
+			int port = bsScanner.nextInt();
+			bsScanner.nextLine();
+			String ip = bsScanner.nextLine();
 			
 			bsSocket.close();
+
+			return new ServentInfo(ip, port);
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
-		return retVal;
+		return null;
 	}
 	
 	@Override
 	public void run() {
-		int someServentPort = getSomeServentPort();
+		ServentInfo someServent = getSomeServentFromSystem();
 		
-		if (someServentPort == -2) {
+		if (someServent == null) {
 			AppConfig.timestampedErrorPrint("Error in contacting bootstrap. Exiting...");
 			System.exit(0);
 		}
-		if (someServentPort == -1) { //bootstrap gave us -1 -> we are first
+		if (someServent.getListenerPort() == -1) { //bootstrap gave us -1 -> we are first
+			AppConfig.activeNodes.add(AppConfig.myServentInfo);
 			AppConfig.timestampedStandardPrint("First node in Chaos system.");
-		} else { //bootstrap gave us something else - let that node tell our successor that we are here
-			NewNodeMessage nnm = new NewNodeMessage(AppConfig.myServentInfo.getListenerPort(), someServentPort);
+		} else { //bootstrap gave us something else - let that node know that we are here
+
+			NewNodeMessage nnm = new NewNodeMessage(AppConfig.myServentInfo.getListenerPort(), someServent.getListenerPort(), AppConfig.myServentInfo.getIpAddress(), someServent.getIpAddress());
 			MessageUtil.sendMessage(nnm);
 		}
 	}

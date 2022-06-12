@@ -32,6 +32,11 @@ public interface Message extends Serializable {
 	 * Port number of the receiver of the message.
 	 */
 	int getReceiverPort();
+
+	/**
+	 * Ip address of the sender.
+	 */
+	String getSenderIpAddress();
 	
 	/**
 	 * IP address of the receiver.
