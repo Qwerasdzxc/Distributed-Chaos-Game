@@ -1,13 +1,16 @@
-22:59:50 - Starting servent [localhost|1100]
-22:59:50 - Pausing for 600000 ms
-22:59:51 - Sending message [1100|0||NEW_NODE|1000]
-22:59:53 - Got message [1000|0||WELCOME|1100]
-22:59:53 - Current active nodes: [[localhost|1000], [localhost|1100]]
-22:59:57 - Got message [1000|1||NODE_JOINED|1100]
-22:59:57 - Current active nodes: [[localhost|1000], [localhost|1100], [localhost|1200]]
-23:00:06 - Got message [1000|4||EXECUTE_JOB|1100]
-23:00:06 - Executing job: triangle
-23:00:16 - Got message [1000|7||REQUEST_STATUS|1100]
-23:00:16 - Sending message [1100|1||TELL_STATUS|1000]
-23:00:30 - Got message [1000|11||STOP_JOB|1100]
-23:00:30 - Stopping job: triangle
+23:36:23 - Starting servent [localhost|1100]
+23:36:23 - Pausing for 45000 ms
+23:36:25 - Sending message [1100|0||NEW_NODE|1000]
+23:36:25 - Got message [1000|0||WELCOME|1100]
+23:36:25 - Current active nodes: [[localhost|1000], [localhost|1100]]
+23:36:29 - Got message [1000|1||NODE_JOINED|1100]
+23:36:29 - Current active nodes: [[localhost|1000], [localhost|1100], [localhost|1200]]
+23:36:40 - Got message [1000|4||EXECUTE_JOB|1100]
+23:36:40 - Executing job: triangle
+23:36:50 - Got message [1000|7||REQUEST_STATUS|1100]
+23:36:50 - Sending message [1100|1||TELL_STATUS|1000]
+23:37:08 - Stopping job: triangle
+23:37:08 - Stopping job: triangle
+23:37:08 - Shutting down...
+23:37:09 - Sending message [1100|2||QUIT|1000]
+23:37:09 - Sending message [1100|3||QUIT|1200]

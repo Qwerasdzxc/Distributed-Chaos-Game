@@ -1,4 +1,4 @@
 Exception in thread "Thread-1" java.lang.NullPointerException: Cannot invoke "String.trim()" because "args" is null
 	at cli.command.StopCommand.execute(StopCommand.java:17)
-	at cli.CLIParser.run(CLIParser.java:72)
+	at cli.CLIParser.run(CLIParser.java:73)
 	at java.base/java.lang.Thread.run(Thread.java:833)

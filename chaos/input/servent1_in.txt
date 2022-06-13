@@ -1,2 +1,2 @@
-pause 600000
-stop
+pause 45000
+quit

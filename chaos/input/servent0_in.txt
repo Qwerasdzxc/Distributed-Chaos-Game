@@ -2,7 +2,5 @@ pause 20000
 start triangle
 pause 10000
 status triangle
-pause 15000
-stop triangle
-pause 60000
+pause 30000
 stop

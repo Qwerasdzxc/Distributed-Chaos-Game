@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.function.Predicate;
 
 public class BootstrapServer {
 
@@ -106,6 +107,16 @@ public class BootstrapServer {
 					AppConfig.timestampedStandardPrint("adding " + newServentPort + " on IP " + newServentIp);
 					
 					activeServents.add(new ServentInfo(newServentIp, newServentPort));
+					newServentSocket.close();
+				} else if (message.equals("Quit")) {
+					int quitterServentPort = socketScanner.nextInt();
+					socketScanner.nextLine();
+					String quitterServentIp = socketScanner.nextLine();
+					ServentInfo quitter = new ServentInfo(quitterServentIp, quitterServentPort);
+
+					AppConfig.timestampedStandardPrint("removing " + quitterServentPort + " on IP " + quitterServentIp);
+
+					activeServents.removeIf(serventInfo -> serventInfo.getUuid().equals(quitter.getUuid()));
 					newServentSocket.close();
 				}
 				
