@@ -1,9 +1,6 @@
 package app;
 
-import app.models.Job;
-import app.models.JobResult;
-import app.models.Point;
-import app.models.ServentInfo;
+import app.models.*;
 import app.workers.JobExecutionWorker;
 
 import java.io.File;
@@ -42,6 +39,11 @@ public class AppConfig {
 	 * Accumulating received TellResult messages
 	 */
 	public static Map<ServentInfo, JobResult> jobResults;
+
+	/**
+	 * Accumulating received TellStatus messages
+	 */
+	public static Map<ServentInfo, NodeStatus> nodeStatuses;
 	
 	/**
 	 * Print a message to stdout with a timestamp
@@ -179,6 +181,7 @@ public class AppConfig {
 		}
 
 		jobResults = new ConcurrentHashMap<>();
+		nodeStatuses = new ConcurrentHashMap<>();
 		activeNodes = new ArrayList<>();
 	}
 
