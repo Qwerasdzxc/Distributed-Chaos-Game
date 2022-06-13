@@ -2,14 +2,14 @@ package cli.command;
 
 import app.AppConfig;
 import app.models.ServentInfo;
-import servent.message.StopJobMessage;
+import servent.message.RequestResultMessage;
 import servent.message.util.MessageUtil;
 
-public class StopCommand implements CLICommand {
+public class ResultCommand implements CLICommand {
 
     @Override
     public String commandName() {
-        return "stop";
+        return "result";
     }
 
     @Override
@@ -18,10 +18,12 @@ public class StopCommand implements CLICommand {
             return;
 
         for (ServentInfo servent : AppConfig.activeNodes) {
-            StopJobMessage stopJobMessage = new StopJobMessage(AppConfig.myServentInfo.getListenerPort(),
+            RequestResultMessage requestResultMessage = new RequestResultMessage(AppConfig.myServentInfo.getListenerPort(),
                     servent.getListenerPort(), AppConfig.myServentInfo.getIpAddress(), servent.getIpAddress(), args);
 
-            MessageUtil.sendMessage(stopJobMessage);
+            MessageUtil.sendMessage(requestResultMessage);
         }
     }
+
 }
+

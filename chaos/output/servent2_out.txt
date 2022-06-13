@@ -1,12 +1,12 @@
-17:28:21 - Starting servent [localhost|1200]
-17:28:21 - Pausing for 600000 ms
-17:28:21 - Sending message [1200|0||NEW_NODE|1100]
-17:28:22 - Got message [1100|2||WELCOME|1200]
-17:28:22 - Current active nodes: [[localhost|1000], [localhost|1100], [localhost|1200]]
-17:28:28 - Got message [1100|4||NODE_JOINED|1200]
-17:28:28 - Current active nodes: [[localhost|1000], [localhost|1100], [localhost|1200], [localhost|1300]]
-17:28:31 - Got message [1000|3||EXECUTE_JOB|1200]
-17:28:31 - Starting job: Job{name='square', n=4, width=400, height=400, proportion=0.3, positions=[(0, 0), (0, 400), (400, 0), (400, 400)]}
-17:28:31 - Executing job: square
-17:28:46 - Stopping job: square
-17:28:46 - Stopping job: Job{name='square', n=4, width=400, height=400, proportion=0.3, positions=[(0, 0), (0, 400), (400, 0), (400, 400)]}
+02:36:37 - Starting servent [localhost|1200]
+02:36:37 - Pausing for 600000 ms
+02:36:38 - Sending message [1200|0||NEW_NODE|1000]
+02:36:39 - Got message [1000|2||WELCOME|1200]
+02:36:39 - Current active nodes: [[localhost|1000], [localhost|1100], [localhost|1200]]
+02:36:48 - Got message [1000|5||EXECUTE_JOB|1200]
+02:36:48 - Starting job: Job{name='triangle', n=3, width=400, height=400, proportion=0.5, positions=[(250, 350), (250, 100), (100, 250)]}
+02:36:48 - Executing job: triangle
+02:36:59 - Got message [1000|8||REQUEST_RESULT|1200]
+02:37:00 - Sending message [1200|1||TELL_RESULT|1000]
+02:37:13 - Got message [1000|12||STOP_JOB|1200]
+02:37:13 - Stopping job: triangle

@@ -1,6 +1,7 @@
 package app;
 
 import app.models.Job;
+import app.models.JobResult;
 import app.models.Point;
 import app.models.ServentInfo;
 import app.workers.JobExecutionWorker;
@@ -13,6 +14,7 @@ import java.security.MessageDigest;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This class contains all the global application configuration stuff.
@@ -35,6 +37,11 @@ public class AppConfig {
 	 * Currently active job worker in our node
 	 */
 	public static JobExecutionWorker activeJobWorker;
+
+	/**
+	 * Accumulating received TellResult messages
+	 */
+	public static Map<ServentInfo, JobResult> jobResults;
 	
 	/**
 	 * Print a message to stdout with a timestamp
@@ -171,6 +178,7 @@ public class AppConfig {
 			System.exit(0);
 		}
 
+		jobResults = new ConcurrentHashMap<>();
 		activeNodes = new ArrayList<>();
 	}
 

@@ -45,7 +45,7 @@ public class MultipleServentStarter {
             while (true) {
                 String line = sc.nextLine();
 
-                if (line.equals("stop")) {
+                if (line.equals("halt")) {
                     for (Process process : serventProcesses) {
                         process.destroy();
                     }
@@ -68,7 +68,7 @@ public class MultipleServentStarter {
         AppConfig.readBsConfig(testName + "/servent_list.properties");
 
         AppConfig.timestampedStandardPrint("Starting multiple servent runner. "
-                + "If servents do not finish on their own, type \"stop\" to finish them");
+                + "If servents do not finish on their own, type \"halt\" to finish them");
 
         Process bsProcess = null;
         ProcessBuilder bsBuilder = new ProcessBuilder("java", "-cp", "out/production/kids_2022_proj_luka_petrovic_rn3318", "app.BootstrapServer", String.valueOf(AppConfig.BOOTSTRAP_PORT));
@@ -88,7 +88,7 @@ public class MultipleServentStarter {
             e1.printStackTrace();
         }
 
-        int serventCount = 4;
+        int serventCount = 3;
 
         for (int i = 0; i < serventCount; i++) {
             try {
@@ -117,7 +117,7 @@ public class MultipleServentStarter {
 
         Thread t = new Thread(new ServentCLI(serventProcesses, bsProcess));
 
-        t.start(); //CLI thread waiting for user to type "stop".
+        t.start(); //CLI thread waiting for user to type "halt".
 
         for (Process process : serventProcesses) {
             try {
@@ -127,7 +127,7 @@ public class MultipleServentStarter {
             }
         }
 
-        AppConfig.timestampedStandardPrint("All servent processes finished. Type \"stop\" to halt bootstrap.");
+        AppConfig.timestampedStandardPrint("All servent processes finished. Type \"halt\" to halt bootstrap.");
         try {
             bsProcess.waitFor();
         } catch (InterruptedException e) {

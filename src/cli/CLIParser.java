@@ -21,7 +21,7 @@ import servent.SimpleServentListener;
  * <li><code>broadcast [text]</code> - broadcasts the given text to all nodes</li>
  * <li><code>causal_broadcast [text]</code> - causally broadcasts the given text to all nodes</li>
  * <li><code>print_causal</code> - prints all received causal broadcast messages</li>
- * <li><code>stop</code> - stops the servent and program finishes</li>
+ * <li><code>halt</code> - halts the servent and program finishes</li>
  * </ul>
  * 
  * @author bmilojkovic
@@ -41,7 +41,9 @@ public class CLIParser implements Runnable, Cancellable {
 		commandList.add(new InfoCommand());
 		commandList.add(new PauseCommand());
 		commandList.add(new StartCommand(this));
-		commandList.add(new StopCommand(this, listener));
+		commandList.add(new HaltCommand(this, listener));
+		commandList.add(new ResultCommand());
+		commandList.add(new StopCommand());
 	}
 	
 	@Override
@@ -53,11 +55,11 @@ public class CLIParser implements Runnable, Cancellable {
 			
 			int spacePos = commandLine.indexOf(" ");
 			
-			String commandName = null;
+			String commandName;
 			String commandArgs = null;
 			if (spacePos != -1) {
 				commandName = commandLine.substring(0, spacePos);
-				commandArgs = commandLine.substring(spacePos+1, commandLine.length());
+				commandArgs = commandLine.substring(spacePos+1);
 			} else {
 				commandName = commandLine;
 			}

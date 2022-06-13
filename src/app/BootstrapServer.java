@@ -27,7 +27,7 @@ public class BootstrapServer {
 			while(true) {
 				line = sc.nextLine();
 				
-				if (line.equals("stop")) {
+				if (line.equals("halt")) {
 					working = false;
 					break;
 				}

@@ -53,9 +53,9 @@ public class SimpleServentListener implements Runnable, Cancellable {
 				MessageHandler messageHandler = new NullHandler(clientMessage);
 
 				/*
-				 * Each message type has it's own handler.
+				 * Each message type has its own handler.
 				 * If we can get away with stateless handlers, we will,
-				 * because that way is much simpler and less error prone.
+				 * because that way is much simpler and less error-prone.
 				 */
 				switch (clientMessage.getMessageType()) {
 				case NEW_NODE:
@@ -69,6 +69,15 @@ public class SimpleServentListener implements Runnable, Cancellable {
 					break;
 				case EXECUTE_JOB:
 					messageHandler = new ExecuteJobHandler(clientMessage);
+					break;
+				case STOP_JOB:
+					messageHandler = new StopJobHandler(clientMessage);
+					break;
+				case REQUEST_RESULT:
+					messageHandler = new RequestResultHandler(clientMessage);
+					break;
+				case TELL_RESULT:
+					messageHandler = new TellResultHandler(clientMessage);
 					break;
 				}
 				

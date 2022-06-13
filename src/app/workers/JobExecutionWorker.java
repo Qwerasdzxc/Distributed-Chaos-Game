@@ -70,4 +70,16 @@ public class JobExecutionWorker implements Runnable, Cancellable {
     public List<Point> getCalculatedPoints() {
         return calculatedPoints;
     }
+
+    public Job getJob() {
+        return job;
+    }
+
+    @Override
+    public String toString() {
+        return "JobExecutionWorker{" +
+                "job=" + job +
+                ", working=" + working +
+                '}';
+    }
 }
