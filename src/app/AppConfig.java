@@ -35,6 +35,16 @@ public class AppConfig {
 	public static List<ServentInfo> activeNodes;
 
 	/**
+	 * Currently active jobs in system
+	 */
+	public static Set<Job> activeJobs;
+
+	/**
+	 * Currently assigned jobs for active nodes
+	 */
+	public static Map<ServentInfo, Job> assignedJobs;
+
+	/**
 	 * Currently active job worker in our node
 	 */
 	public static JobExecutionWorker activeJobWorker;
@@ -295,11 +305,13 @@ public class AppConfig {
 		Thread buddyBackupWorkerThread = new Thread(buddyBackupWorker);
 		buddyBackupWorkerThread.start();
 
+		assignedJobs = new ConcurrentHashMap<>();
 		jobResults = new ConcurrentHashMap<>();
 		buddyJobResultBackups = new ConcurrentHashMap<>();
 		nodeStatuses = new ConcurrentHashMap<>();
 		buddyNodesSuspicionStatus = new ConcurrentHashMap<>();
 		buddyNodesLastPongTime = new ConcurrentHashMap<>();
+		activeJobs = new HashSet<>();
 		activeNodes = new ArrayList<>();
 	}
 

@@ -6,13 +6,11 @@ import java.net.Socket;
 
 import app.AppConfig;
 import servent.message.Message;
+import servent.message.MessageType;
 
 /**
  * For now, just the read and send implementation, based on Java serializing.
  * Not too smart. Doesn't even check the neighbor list, so it actually allows cheating.
- * 
- * Depending on the configuration it delegates sending either to a {@link DelayedMessageSender}
- * in a new thread (non-FIFO) or stores the message in a queue for the {@link FifoSendWorker} (FIFO).
  * 
  * When reading, if we are FIFO, we send an ACK message on the same socket, so the other side
  * knows they can send the next message.
@@ -45,7 +43,8 @@ public class MessageUtil {
 		}
 		
 		if (MESSAGE_UTIL_PRINTING) {
-			AppConfig.timestampedStandardPrint("Got message " + clientMessage);
+			if (clientMessage != null && clientMessage.getMessageType() != MessageType.BUDDY_PING && clientMessage.getMessageType() != MessageType.BUDDY_PONG)
+				AppConfig.timestampedStandardPrint("Got message " + clientMessage);
 		}
 				
 		return clientMessage;

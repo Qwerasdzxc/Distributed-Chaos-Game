@@ -1,18 +1,20 @@
 package servent.message;
 
+import app.models.Job;
+
 public class StopJobMessage extends BasicMessage {
 
     private static final long serialVersionUID = 3899237226642127636L;
 
-    private final String jobName;
+    private final Job job;
 
-    public StopJobMessage(int senderPort, int receiverPort, String senderIpAddress, String receiverIpAddress, String jobName) {
+    public StopJobMessage(int senderPort, int receiverPort, String senderIpAddress, String receiverIpAddress, Job job) {
         super(MessageType.STOP_JOB, senderPort, receiverPort, senderIpAddress, receiverIpAddress);
 
-        this.jobName = jobName;
+        this.job = job;
     }
 
-    public String getJobName() {
-        return jobName;
+    public Job getJob() {
+        return job;
     }
 }

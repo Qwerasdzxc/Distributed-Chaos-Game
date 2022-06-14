@@ -88,7 +88,7 @@ public class MultipleServentStarter {
             e1.printStackTrace();
         }
 
-        int serventCount = 4;
+        int serventCount = 3;
 
         for (int i = 0; i < serventCount; i++) {
             try {
@@ -108,7 +108,7 @@ public class MultipleServentStarter {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            try { //give each node 10s to start up
+            try { //give each node 5s to start up
                 Thread.sleep(5000);
             } catch (InterruptedException e) {
                 e.printStackTrace();

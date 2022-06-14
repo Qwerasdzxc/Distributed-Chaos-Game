@@ -14,10 +14,8 @@ import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
+import java.util.function.Predicate;
 
 public class StartCommand implements CLICommand {
 
@@ -36,11 +34,16 @@ public class StartCommand implements CLICommand {
     public void execute(String args) {
         Job job;
 
+        if (AppConfig.activeJobs.size() >= AppConfig.activeNodes.size()) {
+            AppConfig.timestampedStandardPrint("There is not enough free nodes.");
+            return;
+        }
+
         if (args != null) {
             job = AppConfig.myServentInfo.getJob(args);
 
             if (job == null) {
-                AppConfig.timestampedErrorPrint("Job doesn't exist.");
+                AppConfig.timestampedStandardPrint("Job doesn't exist.");
                 return;
             }
         } else {
@@ -49,7 +52,7 @@ public class StartCommand implements CLICommand {
             AppConfig.timestampedStandardPrint("Set job name: ");
             String name = scanner.nextLine().trim();
 
-            if (AppConfig.myServentInfo.hasJob(name)) {
+            if (AppConfig.activeJobs.stream().anyMatch(j -> j.getName().equals(name))) {
                 AppConfig.timestampedErrorPrint("Job already exists.");
                 return;
             }
@@ -87,14 +90,18 @@ public class StartCommand implements CLICommand {
         AppConfig.timestampedStandardPrint("We will use " + nodeCountForJob + " nodes for this job.");
 
         ServentInfo me = AppConfig.myServentInfo;
+        ArrayList<ServentInfo> assignedNodes = new ArrayList<>();
+        assignedNodes.add(me);
 
-        if (nodeCountForJob < AppConfig.activeNodes.size() || nodeCountForJob == 1) {
+        if (nodeCountForJob < job.getN()) {
             ExecuteJobMessage executeJobMessage = new ExecuteJobMessage(me.getListenerPort(), me.getListenerPort(),
-                    me.getIpAddress(), me.getIpAddress(), job, job.getPositions());
+                    me.getIpAddress(), me.getIpAddress(), job, job.getPositions(), assignedNodes);
 
             MessageUtil.sendMessage(executeJobMessage);
             return;
         }
+
+        Map<ServentInfo, List<Point>> assignedNodePoints = new HashMap<>();
 
         for (int i = 0; i < job.getN(); i++) {
             ServentInfo workerNode = AppConfig.activeNodes.get(i);
@@ -116,8 +123,12 @@ public class StartCommand implements CLICommand {
                 fractalPoints.add(new Point((int) proportionalX, (int) proportionalY));
             }
 
-            ExecuteJobMessage executeJobMessage = new ExecuteJobMessage(me.getListenerPort(), workerNode.getListenerPort(),
-                    me.getIpAddress(), workerNode.getIpAddress(), job, fractalPoints);
+            assignedNodePoints.put(workerNode, fractalPoints);
+        }
+
+        for (Map.Entry<ServentInfo, List<Point>> entry : assignedNodePoints.entrySet()) {
+            ExecuteJobMessage executeJobMessage = new ExecuteJobMessage(me.getListenerPort(), entry.getKey().getListenerPort(),
+                    me.getIpAddress(), entry.getKey().getIpAddress(), job, entry.getValue(), new ArrayList<>(assignedNodePoints.keySet()));
 
             MessageUtil.sendMessage(executeJobMessage);
         }
@@ -125,15 +136,15 @@ public class StartCommand implements CLICommand {
 
     private int getNeededNodeCountForJob(int nodeCount, int n) {
         int result = 1;
-        int x = 0;
+        int multiplier = 0;
 
         while (true) {
-            int possibleNodeCount = 1 + x * (n - 1);
+            int possibleNodeCount = (multiplier * (n - 1)) + 1;
             if (possibleNodeCount > nodeCount) {
                 break;
             }
             result = possibleNodeCount;
-            x++;
+            multiplier++;
         }
 
         return result;

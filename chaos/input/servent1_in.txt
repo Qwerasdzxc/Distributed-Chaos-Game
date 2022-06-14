@@ -1,2 +1,2 @@
-pause 40000
-die
+pause 60000
+stop

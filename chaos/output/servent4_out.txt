@@ -1,0 +1,27 @@
+00:09:57 - Starting servent [localhost|1000]
+00:09:57 - Pausing for 20000 ms
+00:09:57 - First node in Chaos system.
+00:10:03 - Got message [1100|0||NEW_NODE|1000]
+00:10:03 - Current active nodes: [[localhost|1000], [localhost|1100]]
+00:10:04 - Sending message [1000|0||WELCOME|1100]
+00:10:09 - Got message [1100|2||NODE_JOINED|1000]
+00:10:09 - Current active nodes: [[localhost|1000], [localhost|1100], [localhost|1200]]
+00:10:17 - We will use 1 nodes for this job.
+00:10:17 - Pausing for 600000 ms
+00:10:18 - Sending message [1000|5||EXECUTE_JOB|1000]
+00:10:18 - Got message [1000|5||EXECUTE_JOB|1000]
+00:10:18 - Executing job: square
+00:10:23 - Sending message [1000|9||BUDDY_BACKUP|1100]
+00:10:23 - Sending message [1000|8||BUDDY_BACKUP|1200]
+00:10:28 - Sending message [1000|14||BUDDY_BACKUP|1100]
+00:10:28 - Sending message [1000|13||BUDDY_BACKUP|1200]
+00:10:33 - Sending message [1000|17||BUDDY_BACKUP|1100]
+00:10:33 - Sending message [1000|16||BUDDY_BACKUP|1200]
+00:10:38 - Sending message [1000|22||BUDDY_BACKUP|1100]
+00:10:38 - Sending message [1000|21||BUDDY_BACKUP|1200]
+00:10:43 - Sending message [1000|26||BUDDY_BACKUP|1200]
+00:10:43 - Sending message [1000|27||BUDDY_BACKUP|1100]
+00:10:48 - Sending message [1000|29||BUDDY_BACKUP|1200]
+00:10:48 - Sending message [1000|30||BUDDY_BACKUP|1100]
+00:10:53 - Sending message [1000|34||BUDDY_BACKUP|1200]
+00:10:53 - Sending message [1000|35||BUDDY_BACKUP|1100]

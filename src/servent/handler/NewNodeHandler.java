@@ -1,5 +1,6 @@
 package servent.handler;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -41,7 +42,8 @@ public class NewNodeHandler implements MessageHandler {
             AppConfig.timestampedStandardPrint("Current active nodes: " + AppConfig.activeNodes);
 
             WelcomeMessage wm = new WelcomeMessage(AppConfig.myServentInfo.getListenerPort(), newNodePort,
-                    AppConfig.myServentInfo.getIpAddress(), newNodeIp, AppConfig.activeNodes);
+                    AppConfig.myServentInfo.getIpAddress(), newNodeIp, AppConfig.activeNodes,
+                    new ArrayList<>(AppConfig.activeJobs), AppConfig.assignedJobs);
 
             MessageUtil.sendMessage(wm);
         } else {
