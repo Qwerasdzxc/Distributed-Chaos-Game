@@ -1,9 +1,10 @@
 package app;
 
 import app.models.*;
+import app.workers.BuddyBackupWorker;
 import app.workers.BuddyCarerWorker;
 import app.workers.JobExecutionWorker;
-import app.workers.PingPongWorker;
+import app.workers.BuddyPingPongWorker;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -41,7 +42,7 @@ public class AppConfig {
 	/**
 	 * Buddy system for pinging nodes
 	 */
-	public static PingPongWorker pingPongWorker;
+	public static BuddyPingPongWorker buddyPingPongWorker;
 
 	/**
 	 * Buddy system for checking node failures
@@ -49,9 +50,19 @@ public class AppConfig {
 	public static BuddyCarerWorker buddyCarerWorker;
 
 	/**
+	 * Buddy system for handling job backups through nodes
+	 */
+	public static BuddyBackupWorker buddyBackupWorker;
+
+	/**
 	 * Accumulating received TellResult messages
 	 */
 	public static Map<ServentInfo, JobResult> jobResults;
+
+	/**
+	 * Storing received backup JobResults from my Buddies
+	 */
+	public static Map<ServentInfo, JobResult> buddyJobResultBackups;
 
 	/**
 	 * Accumulating received TellStatus messages
@@ -272,15 +283,20 @@ public class AppConfig {
 			System.exit(0);
 		}
 
-		pingPongWorker = new PingPongWorker();
-		Thread pingPongWorkerThread = new Thread(pingPongWorker);
+		buddyPingPongWorker = new BuddyPingPongWorker();
+		Thread pingPongWorkerThread = new Thread(buddyPingPongWorker);
 		pingPongWorkerThread.start();
 
 		buddyCarerWorker = new BuddyCarerWorker();
 		Thread buddyCarerWorkerThread = new Thread(buddyCarerWorker);
 		buddyCarerWorkerThread.start();
 
+		buddyBackupWorker = new BuddyBackupWorker();
+		Thread buddyBackupWorkerThread = new Thread(buddyBackupWorker);
+		buddyBackupWorkerThread.start();
+
 		jobResults = new ConcurrentHashMap<>();
+		buddyJobResultBackups = new ConcurrentHashMap<>();
 		nodeStatuses = new ConcurrentHashMap<>();
 		buddyNodesSuspicionStatus = new ConcurrentHashMap<>();
 		buddyNodesLastPongTime = new ConcurrentHashMap<>();

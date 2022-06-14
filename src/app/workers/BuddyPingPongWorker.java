@@ -6,7 +6,7 @@ import app.models.ServentInfo;
 import servent.message.BuddyPingMessage;
 import servent.message.util.MessageUtil;
 
-public class PingPongWorker implements Runnable, Cancellable {
+public class BuddyPingPongWorker implements Runnable, Cancellable {
 
     private volatile boolean working = true;
 

@@ -26,8 +26,9 @@ public class DieCommand implements CLICommand {
         if (AppConfig.activeJobWorker != null)
             AppConfig.activeJobWorker.stop();
 
-        AppConfig.pingPongWorker.stop();
+        AppConfig.buddyPingPongWorker.stop();
         AppConfig.buddyCarerWorker.stop();
+        AppConfig.buddyBackupWorker.stop();
         cliParser.stop();
         listener.stop();
     }

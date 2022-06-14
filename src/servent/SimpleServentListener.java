@@ -103,6 +103,9 @@ public class SimpleServentListener implements Runnable, Cancellable {
                     case BUDDY_NO:
                         messageHandler = new BuddyNoHandler(clientMessage);
                         break;
+                    case BUDDY_BACKUP:
+                        messageHandler = new BuddyBackupHandler(clientMessage);
+                        break;
                 }
 
                 threadPool.submit(messageHandler);

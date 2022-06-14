@@ -1,8 +1,11 @@
 package app.models;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class JobResult {
+public class JobResult implements Serializable {
+
+    private static final long serialVersionUID = 5309170042791281555L;
 
     private final String jobName;
 

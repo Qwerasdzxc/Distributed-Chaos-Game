@@ -2,6 +2,7 @@ package app.workers;
 
 import app.AppConfig;
 import app.Cancellable;
+import app.models.JobResult;
 import app.models.ServentInfo;
 import servent.message.BuddyIsAliveMessage;
 import servent.message.util.MessageUtil;
@@ -47,8 +48,7 @@ public class BuddyCarerWorker implements Runnable, Cancellable {
                     }
                 }
                 else if (now - firstBuddyLastPong.getTime() > AppConfig.myServentInfo.getStrongFailureLimit()) {
-                    // TODO: Start node removal process
-                    AppConfig.timestampedStandardPrint("Starting removal process for node: " + firstBuddy.getListenerPort());
+                    startRemovalProcessForBuddy(firstBuddy);
                 }
             }
 
@@ -70,11 +70,27 @@ public class BuddyCarerWorker implements Runnable, Cancellable {
                     }
                 }
                 else if (now - secondBuddyLastPong.getTime() > AppConfig.myServentInfo.getStrongFailureLimit()) {
-                    // TODO: Start node removal process
-                    AppConfig.timestampedStandardPrint("Starting removal process for node: " + secondBuddy.getListenerPort());
+                    startRemovalProcessForBuddy(secondBuddy);
                 }
             }
         }
+    }
+
+    private void startRemovalProcessForBuddy(ServentInfo buddy) {
+        // Saving Buddy's last known work
+        // TODO: If we were not working on this job, send it to other nodes who were
+        JobExecutionWorker jobWorker = AppConfig.activeJobWorker;
+        if (jobWorker != null) {
+            JobResult lastBuddyBackup = AppConfig.buddyJobResultBackups.get(buddy);
+            if (lastBuddyBackup != null && jobWorker.getJob().getName().equals(lastBuddyBackup.getJobName())) {
+                jobWorker.getCalculatedPoints().addAll(lastBuddyBackup.getCalculatedPoints());
+
+                AppConfig.timestampedStandardPrint("I took over calculated points from node: " + buddy.getListenerPort());
+            }
+        }
+
+        // TODO: Start node removal process
+        AppConfig.timestampedStandardPrint("Starting removal process for node: " + buddy.getListenerPort());
     }
 
     @Override
