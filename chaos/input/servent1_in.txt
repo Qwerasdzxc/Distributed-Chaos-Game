@@ -1,2 +1,2 @@
-pause 45000
-quit
+pause 30000
+die

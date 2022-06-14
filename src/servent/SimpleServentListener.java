@@ -87,6 +87,22 @@ public class SimpleServentListener implements Runnable, Cancellable {
                         break;
                     case QUIT:
                         messageHandler = new QuitHandler(clientMessage);
+                        break;
+                    case BUDDY_PING:
+                        messageHandler = new BuddyPingHandler(clientMessage);
+                        break;
+                    case BUDDY_PONG:
+                        messageHandler = new BuddyPongHandler(clientMessage);
+                        break;
+                    case BUDDY_IS_ALIVE:
+                        messageHandler = new BuddyIsAliveHandler(clientMessage);
+                        break;
+                    case BUDDY_YES:
+                        messageHandler = new BuddyYesHandler(clientMessage);
+                        break;
+                    case BUDDY_NO:
+                        messageHandler = new BuddyNoHandler(clientMessage);
+                        break;
                 }
 
                 threadPool.submit(messageHandler);

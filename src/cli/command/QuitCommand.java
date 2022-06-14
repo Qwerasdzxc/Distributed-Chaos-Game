@@ -41,8 +41,6 @@ public class QuitCommand implements CLICommand {
                 quitMessage = new QuitMessage(AppConfig.myServentInfo.getListenerPort(),
                         servent.getListenerPort(), AppConfig.myServentInfo.getIpAddress(), servent.getIpAddress(),
                         jobWorker.getJob().getName(), new ArrayList<>(jobWorker.getCalculatedPoints()));
-
-                jobWorker.stop();
             } else {
                 quitMessage = new QuitMessage(AppConfig.myServentInfo.getListenerPort(),
                         servent.getListenerPort(), AppConfig.myServentInfo.getIpAddress(),
@@ -66,6 +64,12 @@ public class QuitCommand implements CLICommand {
         }
 
         AppConfig.timestampedStandardPrint("Shutting down...");
+
+        if (AppConfig.activeJobWorker != null)
+            AppConfig.activeJobWorker.stop();
+
+        AppConfig.pingPongWorker.stop();
+        AppConfig.buddyCarerWorker.stop();
         cliParser.stop();
         listener.stop();
     }

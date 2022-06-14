@@ -21,11 +21,17 @@ public class ServentInfo implements Serializable {
 	private final int listenerPort;
 	private final List<Job> jobs;
 
+	private int weakFailureLimit;
+	private int strongFailureLimit;
+
 	private final String uuid;
 
 	public ServentInfo(String ipAddress, int listenerPort) {
 		this.ipAddress = ipAddress;
 		this.listenerPort = listenerPort;
+
+		this.weakFailureLimit = 1000;
+		this.strongFailureLimit = 10000;
 
 		this.jobs = new ArrayList<>();
 		this.uuid = AppConfig.sha256(ipAddress + ":" + listenerPort);
@@ -68,6 +74,22 @@ public class ServentInfo implements Serializable {
 		return false;
 	}
 
+	public int getWeakFailureLimit() {
+		return weakFailureLimit;
+	}
+
+	public int getStrongFailureLimit() {
+		return strongFailureLimit;
+	}
+
+	public void setWeakFailureLimit(int weakFailureLimit) {
+		this.weakFailureLimit = weakFailureLimit;
+	}
+
+	public void setStrongFailureLimit(int strongFailureLimit) {
+		this.strongFailureLimit = strongFailureLimit;
+	}
+
 	public String getUuid() {
 		return uuid;
 	}
@@ -75,5 +97,20 @@ public class ServentInfo implements Serializable {
 	@Override
 	public String toString() {
 		return "[" + ipAddress + "|" + listenerPort + "]";
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		ServentInfo that = (ServentInfo) o;
+
+		return uuid.equals(that.uuid);
+	}
+
+	@Override
+	public int hashCode() {
+		return uuid.hashCode();
 	}
 }

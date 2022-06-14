@@ -1,13 +1,16 @@
 package app;
 
 import app.models.*;
+import app.workers.BuddyCarerWorker;
 import app.workers.JobExecutionWorker;
+import app.workers.PingPongWorker;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -36,6 +39,16 @@ public class AppConfig {
 	public static JobExecutionWorker activeJobWorker;
 
 	/**
+	 * Buddy system for pinging nodes
+	 */
+	public static PingPongWorker pingPongWorker;
+
+	/**
+	 * Buddy system for checking node failures
+	 */
+	public static BuddyCarerWorker buddyCarerWorker;
+
+	/**
 	 * Accumulating received TellResult messages
 	 */
 	public static Map<ServentInfo, JobResult> jobResults;
@@ -44,6 +57,16 @@ public class AppConfig {
 	 * Accumulating received TellStatus messages
 	 */
 	public static Map<ServentInfo, NodeStatus> nodeStatuses;
+
+	/**
+	 * Current suspicious status of our watching nodes in Buddy system
+	 */
+	public static Map<ServentInfo, Boolean> buddyNodesSuspicionStatus;
+
+	/**
+	 * Current really suspicious status of our watching nodes in Buddy system
+	 */
+	public static Map<ServentInfo, Timestamp> buddyNodesLastPongTime;
 	
 	/**
 	 * Print a message to stdout with a timestamp
@@ -65,6 +88,64 @@ public class AppConfig {
 		Date now = new Date();
 		
 		System.err.println(timeFormat.format(now) + " - " + message);
+	}
+
+	public static ServentInfo getMyFirstBuddy(ServentInfo me) {
+		if (activeNodes.size() <= 1)
+			return null;
+
+		int myIndex = activeNodes.indexOf(me);
+
+		if (myIndex == 0)
+			return activeNodes.get(AppConfig.activeNodes.size() - 1);
+
+		return activeNodes.get(myIndex - 1);
+	}
+
+	public static ServentInfo getMySecondBuddy(ServentInfo me) {
+		if (activeNodes.size() <= 2)
+			return null;
+
+		int myIndex = activeNodes.indexOf(me);
+		if (myIndex == activeNodes.size() - 1)
+			return activeNodes.get(0);
+
+		return activeNodes.get(myIndex + 1);
+	}
+
+	public static ServentInfo getBuddiesOtherBuddy(ServentInfo me, ServentInfo buddy) {
+		if (activeNodes.size() <= 2)
+			return null;
+
+		int buddyIndex = activeNodes.indexOf(buddy);
+
+		if (buddyIndex == 0) {
+			ServentInfo buddy1 = activeNodes.get(AppConfig.activeNodes.size() - 1);
+			ServentInfo buddy2 = activeNodes.get(1);
+
+			if (buddy1.equals(me))
+				return buddy2;
+
+			return buddy1;
+		}
+
+		if (buddyIndex == activeNodes.size() - 1) {
+			ServentInfo buddy1 = activeNodes.get(AppConfig.activeNodes.size() - 2);
+			ServentInfo buddy2 = activeNodes.get(0);
+
+			if (buddy1.equals(me))
+				return buddy2;
+
+			return buddy1;
+		}
+
+		ServentInfo buddy1 = activeNodes.get(buddyIndex + 1);
+		ServentInfo buddy2 = activeNodes.get(buddyIndex - 1);
+
+		if (buddy1.equals(me))
+			return buddy2;
+
+		return buddy1;
 	}
 	
 	public static boolean INITIALIZED = false;
@@ -153,6 +234,17 @@ public class AppConfig {
 		}
 
 		try {
+			int weakFailureLimit = Integer.parseInt(properties.getProperty("weak_failure_limit"));
+			int strongFailureLimit = Integer.parseInt(properties.getProperty("strong_failure_limit"));
+
+			myServentInfo.setWeakFailureLimit(weakFailureLimit);
+			myServentInfo.setStrongFailureLimit(strongFailureLimit);
+		} catch (NumberFormatException e) {
+			timestampedErrorPrint("Problem reading port. Exiting...");
+			System.exit(0);
+		}
+
+		try {
 			int jobCount = Integer.parseInt(properties.getProperty("job_count"));
 
 			for (int i = 0; i < jobCount; i++) {
@@ -180,8 +272,18 @@ public class AppConfig {
 			System.exit(0);
 		}
 
+		pingPongWorker = new PingPongWorker();
+		Thread pingPongWorkerThread = new Thread(pingPongWorker);
+		pingPongWorkerThread.start();
+
+		buddyCarerWorker = new BuddyCarerWorker();
+		Thread buddyCarerWorkerThread = new Thread(buddyCarerWorker);
+		buddyCarerWorkerThread.start();
+
 		jobResults = new ConcurrentHashMap<>();
 		nodeStatuses = new ConcurrentHashMap<>();
+		buddyNodesSuspicionStatus = new ConcurrentHashMap<>();
+		buddyNodesLastPongTime = new ConcurrentHashMap<>();
 		activeNodes = new ArrayList<>();
 	}
 

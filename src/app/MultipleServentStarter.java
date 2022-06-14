@@ -88,7 +88,7 @@ public class MultipleServentStarter {
             e1.printStackTrace();
         }
 
-        int serventCount = 3;
+        int serventCount = 4;
 
         for (int i = 0; i < serventCount; i++) {
             try {
