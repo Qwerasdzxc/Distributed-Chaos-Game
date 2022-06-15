@@ -1,9 +1,7 @@
 package cli.command;
 
 import app.AppConfig;
-import app.models.Job;
-import app.models.Point;
-import app.models.ServentInfo;
+import app.models.*;
 import app.workers.JobExecutionWorker;
 import cli.CLIParser;
 import servent.message.ExecuteJobMessage;
@@ -86,7 +84,7 @@ public class StartCommand implements CLICommand {
             job = new Job(name, n, width, height, proportion, positions);
         }
 
-        int nodeCountForJob = getNeededNodeCountForJob(AppConfig.activeNodes.size(), job.getN());
+        int nodeCountForJob = getNodeCountForJob(AppConfig.activeNodes.size(), job.getN());
         AppConfig.timestampedStandardPrint("We will use " + nodeCountForJob + " nodes for this job.");
 
         ServentInfo me = AppConfig.myServentInfo;
@@ -134,55 +132,86 @@ public class StartCommand implements CLICommand {
         }
     }
 
-    private int getNeededNodeCountForJob(int nodeCount, int n) {
-        int result = 1;
-        int multiplier = 0;
+    private List<Point> getStartingPointsForIndex(int pointIndex, List<Point> points, double proportion) {
+        List<Point> childPoints = new ArrayList<>();
 
-        while (true) {
-            int possibleNodeCount = (multiplier * (n - 1)) + 1;
-            if (possibleNodeCount > nodeCount) {
-                break;
+        Point startPoint = points.get(pointIndex);
+        for (int j = 0; j < points.size(); j++) {
+            if (pointIndex == j) {
+                childPoints.add(startPoint);
+                continue;
             }
-            result = possibleNodeCount;
-            multiplier++;
+
+            int x = startPoint.getX();
+            int y = startPoint.getY();
+
+            double proportionalX = x + proportion * (points.get(j).getX() - x);
+            double proportionalY = y + proportion * (points.get(j).getY() - y);
+
+            childPoints.add(new Point((int) proportionalX, (int) proportionalY));
         }
 
-        return result;
+        return childPoints;
     }
 
-//    private List<String> computeFractalIds(int nodesCount, int pointsCount) {
-//        List<String> fractalIds = new ArrayList<>();
-//        int length = 0;
-//        String base = "";
-//
-//        while (nodesCount > 0) {
-//            if (length >= 1) {
-//                boolean hasLength = false;
-//                for (String fractalId: fractalIds) {
-//                    if (fractalId.length() == length) {
-//                        base = fractalId;
-//                        fractalIds.remove(fractalId);
-//                        hasLength = true;
-//                        break;
-//                    }
-//                }
-//                if (!hasLength) {
-//                    length++;
-//                    continue;
-//                }
-//
-//                nodesCount++;
-//            }
-//
-//            for (int i = 0; i < pointsCount; i++) {
-//                fractalIds.add(base + i);
-//            }
-//            if (length == 0) {
-//                length++;
-//            }
-//            nodesCount -= pointsCount;
-//        }
-//        Collections.sort(fractalIds);
-//        return fractalIds;
-//    }
+    private int getNodeCountForJob(int nodeCount, int n) {
+        if (nodeCount < n)
+            return 1;
+
+        if (nodeCount == n)
+            return nodeCount;
+
+        return getFractalIds(nodeCount, n).size();
+    }
+
+    private List<FractalId> getFractalIds(int nodeCount, int n) {
+        int depth = 1;
+        int boundaryForSplit = n - 1;
+        List<FractalId> fractalIds = new ArrayList<>();
+
+        for (int i = 0; i < n; i ++) {
+            fractalIds.add(new FractalId(String.valueOf(i)));
+        }
+
+        int depthChecker = 0;
+        int nodesLeftForSplit = nodeCount - n;
+
+        while (nodesLeftForSplit >= boundaryForSplit) {
+            FractalId fractalIdToSplit = getFirstFractalIdToSplit(fractalIds, depth);
+
+            List<FractalId> splittedFractalIds = splitFractalId(fractalIdToSplit, n);
+
+            fractalIds.remove(fractalIdToSplit);
+            fractalIds.addAll(splittedFractalIds);
+            fractalIds.sort(Comparator.comparing(FractalId::getValue));
+
+            nodesLeftForSplit -= boundaryForSplit;
+            depthChecker += 1;
+            if (depthChecker == n) {
+                depth += 1;
+                depthChecker = 0;
+            }
+        }
+
+        return fractalIds;
+    }
+
+    private FractalId getFirstFractalIdToSplit(List<FractalId> fractalIds, int depth) {
+        for (FractalId fractalId : fractalIds) {
+            if (fractalId.getDepth() == depth)
+                return fractalId;
+        }
+
+        return fractalIds.get(0);
+    }
+
+    private List<FractalId> splitFractalId(FractalId fractalIdToSplit, int n) {
+        List<FractalId> fractalIds = new ArrayList<>();
+
+        for (int i = 0; i < n; i ++) {
+            fractalIds.add(new FractalId(fractalIdToSplit.getValue() + i));
+        }
+
+        return fractalIds;
+    }
 }
