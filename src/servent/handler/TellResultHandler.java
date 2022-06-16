@@ -48,10 +48,13 @@ public class TellResultHandler implements MessageHandler {
 
                 renderImage(tellResultMessage.getSubFractal().getFractalId().getValue(), job.get(), tellResultMessage.getCalculatedPoints());
                 AppConfig.timestampedStandardPrint("Generated PNG for job: " + job.get().getName() + " for FID: " + tellResultMessage.getSubFractal().getFractalId().getValue());
+                return;
             }
 
-            // TODO: Handle nested fractals
-            if (job.get().getN() == AppConfig.jobResults.size()) {
+            long totalSubFractalCount = AppConfig.assignedNodeSubFractals.values().stream().filter(
+                    subFractal -> subFractal.getJob().equals(job.get())).count();
+
+            if (totalSubFractalCount == AppConfig.jobResults.size()) {
                 List<Point> mergedPoints = new ArrayList<>();
                 for (JobResult jobResult : AppConfig.jobResults.values()) {
                     mergedPoints.addAll(jobResult.getCalculatedPoints());
