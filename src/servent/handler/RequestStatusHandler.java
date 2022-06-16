@@ -20,8 +20,6 @@ public class RequestStatusHandler implements MessageHandler {
 
             JobExecutionWorker jobWorker = AppConfig.activeJobWorker;
 
-            AppConfig.timestampedStandardPrint(requestStatusMessage.toString());
-
             if (jobWorker == null)
                 return;
 

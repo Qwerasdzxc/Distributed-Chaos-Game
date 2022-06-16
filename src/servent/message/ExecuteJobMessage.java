@@ -16,11 +16,14 @@ public class ExecuteJobMessage extends BasicMessage {
 
     private final Map<ServentInfo, SubFractal> assignedNodeSubFractals;
 
-    public ExecuteJobMessage(int senderPort, int receiverPort, String senderIp, String receiverIp, SubFractal subFractal, Map<ServentInfo, SubFractal> assignedNodeSubFractals) {
+    private final List<Job> activeJobs;
+
+    public ExecuteJobMessage(int senderPort, int receiverPort, String senderIp, String receiverIp, SubFractal subFractal, Map<ServentInfo, SubFractal> assignedNodeSubFractals, List<Job> activeJobs) {
         super(MessageType.EXECUTE_JOB, senderPort, receiverPort, senderIp, receiverIp);
 
         this.subFractal = subFractal;
         this.assignedNodeSubFractals = assignedNodeSubFractals;
+        this.activeJobs = activeJobs;
     }
 
     public SubFractal getSubFractal() {
@@ -31,11 +34,7 @@ public class ExecuteJobMessage extends BasicMessage {
         return assignedNodeSubFractals;
     }
 
-    @Override
-    public String toString() {
-        return super.toString() + "ExecuteJobMessage{" +
-                "subFractal=" + subFractal +
-                ", assignedNodeSubFractals=" + assignedNodeSubFractals +
-                '}';
+    public List<Job> getActiveJobs() {
+        return activeJobs;
     }
 }

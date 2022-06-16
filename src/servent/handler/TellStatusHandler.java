@@ -43,9 +43,12 @@ public class TellStatusHandler implements MessageHandler {
                     printStatus(Optional.empty(), null);
                 }
             } else {
-                if (tellStatusMessage.getFid() == null && AppConfig.nodeStatuses.size() == AppConfig.assignedNodeSubFractals.values().stream().filter(subFractal -> subFractal.getJob().equals(tellStatusMessage.getSubFractal().getJob())).count()) {
+                long count1 = AppConfig.assignedNodeSubFractals.values().stream().filter(subFractal -> subFractal.getJob().getName().equals(tellStatusMessage.getSubFractal().getJob().getName())).count();
+                long count2 = AppConfig.assignedNodeSubFractals.values().stream().filter(subFractal -> subFractal.getJob().getName().equals(tellStatusMessage.getSubFractal().getJob().getName()) && subFractal.getFractalId().getValue().equals(tellStatusMessage.getFid())).count();
+
+                if (tellStatusMessage.getFid() == null && AppConfig.nodeStatuses.size() == count1) {
                     printStatus(job, null);
-                } else if (AppConfig.nodeStatuses.size() == AppConfig.assignedNodeSubFractals.values().stream().filter(subFractal -> subFractal.getJob().equals(tellStatusMessage.getSubFractal().getJob()) && subFractal.getFractalId().getValue().equals(tellStatusMessage.getFid())).count()) {
+                } else if (AppConfig.nodeStatuses.size() == count2) {
                     printStatus(job, tellStatusMessage.getFid());
                 }
             }
@@ -73,6 +76,8 @@ public class TellStatusHandler implements MessageHandler {
         status.append(".\n");
         for (Map.Entry<ServentInfo, NodeStatus> entry : AppConfig.nodeStatuses.entrySet()) {
             status.append("Node ");
+            status.append(entry.getKey().getListenerPort());
+            status.append(" with FID ");
             status.append(entry.getValue().getSubFractal().getFractalId().getValue());
             status.append(": ");
             status.append(entry.getValue().getCalculatedPointsCount());

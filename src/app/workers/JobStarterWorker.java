@@ -48,15 +48,12 @@ public class JobStarterWorker implements Runnable {
         Map<Job, List<ServentInfo>> nodesForJobs = getNodesForJobsMap(AppConfig.activeNodes, jobsToStart);
         Map<ServentInfo, SubFractal> assignedNodeSubFractals = new HashMap<>();
 
-        AppConfig.timestampedStandardPrint(nodesForJobs.toString());
-
         for (Map.Entry<Job, List<ServentInfo>> entry : nodesForJobs.entrySet()) {
             Job job = entry.getKey();
-            int nodeCountForJob = getNodeCountForJob(entry.getValue().size(), job);
-            AppConfig.timestampedStandardPrint("We will use " + nodeCountForJob + " nodes for job: " + job.getName());
+            int nodeCountForJob = entry.getValue().size();
+            AppConfig.timestampedStandardPrint("We will use " + entry.getValue().size() + " nodes for job: " + job.getName());
 
             if (nodeCountForJob < job.getN()) {
-                AppConfig.timestampedErrorPrint("WE ARE IN CONTINUE MOMENT FOR " + job.getName());
                 ServentInfo soleWorker = entry.getValue().get(0);
                 SubFractal subFractal = new SubFractal(job, new FractalId("0"), job.getPositions());
                 assignedNodeSubFractals.put(soleWorker, subFractal);
@@ -66,6 +63,11 @@ public class JobStarterWorker implements Runnable {
 
             List<SubFractal> subFractals = getFractalIds(nodeCountForJob, job);
 
+            // Remove nodes that won't be used - because they don't have their Fractal ID
+            for (int i = entry.getValue().size() - 1; entry.getValue().size() != subFractals.size(); i --) {
+                entry.getValue().remove(i);
+            }
+
             for (int i = 0; i < subFractals.size(); i ++) {
                 ServentInfo workerNode = entry.getValue().get(i);
                 assignedNodeSubFractals.put(workerNode, subFractals.get(i));
@@ -74,7 +76,7 @@ public class JobStarterWorker implements Runnable {
 
         for (Map.Entry<ServentInfo, SubFractal> subEntry : assignedNodeSubFractals.entrySet()) {
             ExecuteJobMessage executeJobMessage = new ExecuteJobMessage(me.getListenerPort(), subEntry.getKey().getListenerPort(),
-                    me.getIpAddress(), subEntry.getKey().getIpAddress(), subEntry.getValue(), assignedNodeSubFractals);
+                    me.getIpAddress(), subEntry.getKey().getIpAddress(), subEntry.getValue(), assignedNodeSubFractals, jobsToStart);
 
             MessageUtil.sendMessage(executeJobMessage);
         }
@@ -95,6 +97,12 @@ public class JobStarterWorker implements Runnable {
             if (leftover > 0) {
                 nodesForJob.add(nodes.get(nodes.size() - leftover));
                 leftover --;
+            }
+
+            if (nodesForJob.size() < jobs.get(i).getN()) {
+                ServentInfo soleWorker = nodesForJob.get(0);
+                nodesForJob.clear();
+                nodesForJob.add(soleWorker);
             }
 
             nodesForJobs.put(jobs.get(i), nodesForJob);
@@ -123,16 +131,6 @@ public class JobStarterWorker implements Runnable {
         }
 
         return childPoints;
-    }
-
-    private int getNodeCountForJob(int nodeCount, Job job) {
-        if (nodeCount < job.getN())
-            return 1;
-
-        if (nodeCount == job.getN())
-            return nodeCount;
-
-        return getFractalIds(nodeCount, job).size();
     }
 
     private List<SubFractal> getFractalIds(int nodeCount, Job job) {

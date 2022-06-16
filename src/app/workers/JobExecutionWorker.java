@@ -29,7 +29,6 @@ public class JobExecutionWorker implements Runnable, Cancellable {
     @Override
     public void run() {
         AppConfig.timestampedStandardPrint("Executing job: " + subFractal.getJob().getName() + " with FID: " + subFractal.getFractalId().getValue());
-        AppConfig.timestampedStandardPrint(assignedStartingPoints.toString());
 
         while (working) {
             Point newPoint = calculatePoint();

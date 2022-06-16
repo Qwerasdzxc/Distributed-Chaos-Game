@@ -5,6 +5,8 @@ import app.models.ServentInfo;
 import app.workers.JobExecutionWorker;
 import servent.message.*;
 
+import java.util.HashSet;
+
 public class ExecuteJobHandler implements MessageHandler {
 
     private final Message clientMessage;
@@ -25,7 +27,7 @@ public class ExecuteJobHandler implements MessageHandler {
             jobExecution.start();
 
             AppConfig.activeJobWorker = jobExecutionWorker;
-            AppConfig.activeJobs.add(executeJobMessage.getSubFractal().getJob());
+            AppConfig.activeJobs = new HashSet<>(executeJobMessage.getActiveJobs());
         } else {
             AppConfig.timestampedErrorPrint("EXECUTE_JOB handler got something that is not execute job message.");
         }

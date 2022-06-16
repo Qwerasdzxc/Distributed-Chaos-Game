@@ -19,8 +19,11 @@ public class StatusCommand implements CLICommand {
     @Override
     public void execute(String argsStr) {
         String[] args = new String[]{};
-        if (argsStr != null && argsStr.contains(" ")) {
-            args = argsStr.split(" ");
+        if (argsStr != null) {
+            if (argsStr.contains(" "))
+                args = argsStr.split(" ");
+            else
+                args = new String[]{argsStr};
         }
 
         String jobName = null;
@@ -48,7 +51,7 @@ public class StatusCommand implements CLICommand {
                 continue;
 
             RequestStatusMessage requestStatusMessage = new RequestStatusMessage(AppConfig.myServentInfo.getListenerPort(),
-                    entry.getKey().getListenerPort(), AppConfig.myServentInfo.getIpAddress(), entry.getKey().getIpAddress(), entry.getValue(), null, jobName != null);
+                    entry.getKey().getListenerPort(), AppConfig.myServentInfo.getIpAddress(), entry.getKey().getIpAddress(), entry.getValue(), null, jobName == null);
 
             MessageUtil.sendMessage(requestStatusMessage);
         }
