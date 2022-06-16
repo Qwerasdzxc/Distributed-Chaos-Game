@@ -11,14 +11,21 @@ import java.util.*;
 public class JobStarterWorker implements Runnable {
 
     private final List<Job> jobsToStart;
+    private final boolean forceStop;
 
     public JobStarterWorker(List<Job> jobsToStart) {
         this.jobsToStart = jobsToStart;
+        this.forceStop = false;
+    }
+
+    public JobStarterWorker(List<Job> jobsToStart, boolean forceStop) {
+        this.jobsToStart = jobsToStart;
+        this.forceStop = forceStop;
     }
 
     @Override
     public void run() {
-        if (jobsToStart.size() > 1) {
+        if (jobsToStart.size() > 1 || forceStop) {
             AppConfig.timestampedStandardPrint("Sending stop job messages and waiting for acks...");
 
             for (Map.Entry<ServentInfo, SubFractal> entry : AppConfig.assignedNodeSubFractals.entrySet()) {

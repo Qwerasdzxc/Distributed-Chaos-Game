@@ -8,5 +8,7 @@ pause 15000
 result triangle
 pause 15000
 status
+pause 15000
+stop square
 pause 600000
 stop
