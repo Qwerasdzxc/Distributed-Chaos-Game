@@ -14,9 +14,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Predicate;
 
 public class TellResultHandler implements MessageHandler {
@@ -46,7 +44,7 @@ public class TellResultHandler implements MessageHandler {
             if (!tellResultMessage.isTotal()) {
                 AppConfig.jobResults.clear();
 
-                renderImage(tellResultMessage.getSubFractal().getFractalId().getValue(), job.get(), tellResultMessage.getCalculatedPoints());
+                renderImage(tellResultMessage.getSubFractal().getFractalId().getValue(), job.get(), new HashSet<>(tellResultMessage.getCalculatedPoints()));
                 AppConfig.timestampedStandardPrint("Generated PNG for job: " + job.get().getName() + " for FID: " + tellResultMessage.getSubFractal().getFractalId().getValue());
                 return;
             }
@@ -55,7 +53,7 @@ public class TellResultHandler implements MessageHandler {
                     subFractal -> subFractal.getJob().equals(job.get())).count();
 
             if (totalSubFractalCount == AppConfig.jobResults.size()) {
-                List<Point> mergedPoints = new ArrayList<>();
+                Set<Point> mergedPoints = new HashSet<>();
                 for (JobResult jobResult : AppConfig.jobResults.values()) {
                     mergedPoints.addAll(jobResult.getCalculatedPoints());
                 }
@@ -70,11 +68,11 @@ public class TellResultHandler implements MessageHandler {
         }
     }
 
-    public static void renderImage(Job job, List<Point> points) {
+    public static void renderImage(Job job, Set<Point> points) {
         renderImage("total", job, points);
     }
 
-    public static void renderImage(String fid, Job job, List<Point> points) {
+    public static void renderImage(String fid, Job job, Set<Point> points) {
         BufferedImage image = new BufferedImage(job.getWidth(), job.getHeight(), BufferedImage.TYPE_3BYTE_BGR);
         WritableRaster writableRaster = image.getRaster();
         int[] rgb = new int[3];
