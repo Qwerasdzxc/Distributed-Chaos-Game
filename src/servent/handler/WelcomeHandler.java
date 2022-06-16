@@ -24,7 +24,7 @@ public class WelcomeHandler implements MessageHandler {
 
 			AppConfig.activeNodes.addAll(welcomeMsg.getActiveNodes());
 			AppConfig.activeJobs.addAll(welcomeMsg.getActiveJobs());
-			AppConfig.assignedJobs.putAll(welcomeMsg.getAssignedJobs());
+			AppConfig.assignedNodeSubFractals.putAll(welcomeMsg.getAssignedNodeSubFractals());
 
 			AppConfig.timestampedStandardPrint("Current active nodes: " + AppConfig.activeNodes);
 

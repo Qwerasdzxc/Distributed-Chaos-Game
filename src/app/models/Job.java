@@ -58,7 +58,6 @@ public class Job implements Serializable {
                 ", width=" + width +
                 ", height=" + height +
                 ", proportion=" + proportion +
-                ", positions=" + positions +
                 '}';
     }
 

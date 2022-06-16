@@ -43,7 +43,7 @@ public class NewNodeHandler implements MessageHandler {
 
             WelcomeMessage wm = new WelcomeMessage(AppConfig.myServentInfo.getListenerPort(), newNodePort,
                     AppConfig.myServentInfo.getIpAddress(), newNodeIp, AppConfig.activeNodes,
-                    new ArrayList<>(AppConfig.activeJobs), AppConfig.assignedJobs);
+                    new ArrayList<>(AppConfig.activeJobs), AppConfig.assignedNodeSubFractals);
 
             MessageUtil.sendMessage(wm);
         } else {

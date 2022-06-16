@@ -1,16 +1,25 @@
 package servent.message;
 
+import app.models.SubFractal;
+
 public class RequestResultMessage extends BasicMessage {
 
-    private final String jobName;
+    private final SubFractal subFractal;
 
-    public RequestResultMessage(int senderPort, int receiverPort, String senderIpAddress, String receiverIpAddress, String jobName) {
+    private final boolean isTotal;
+
+    public RequestResultMessage(int senderPort, int receiverPort, String senderIpAddress, String receiverIpAddress, SubFractal subFractal, boolean isTotal) {
         super(MessageType.REQUEST_RESULT, senderPort, receiverPort, senderIpAddress, receiverIpAddress);
 
-        this.jobName = jobName;
+        this.subFractal = subFractal;
+        this.isTotal = isTotal;
     }
 
-    public String getJobName() {
-        return jobName;
+    public SubFractal getSubFractal() {
+        return subFractal;
+    }
+
+    public boolean isTotal() {
+        return isTotal;
     }
 }

@@ -25,13 +25,13 @@ public class RequestResultHandler implements MessageHandler {
 
             JobExecutionWorker jobWorker = AppConfig.activeJobWorker;
 
-            if (jobWorker == null || !jobWorker.getJob().getName().equals(requestResultMessage.getJobName()))
+            if (jobWorker == null || !jobWorker.getSubFractal().getJob().equals(requestResultMessage.getSubFractal().getJob()))
                 return;
 
             TellResultMessage tellResultMessage = new TellResultMessage(
                     AppConfig.myServentInfo.getListenerPort(), requestResultMessage.getSenderPort(),
                     AppConfig.myServentInfo.getIpAddress(), requestResultMessage.getSenderIpAddress(),
-                    jobWorker.getJob().getName(), new ArrayList<>(jobWorker.getCalculatedPoints()));
+                    jobWorker.getSubFractal(), new ArrayList<>(jobWorker.getCalculatedPoints()), requestResultMessage.isTotal());
 
             MessageUtil.sendMessage(tellResultMessage);
         } else {

@@ -2,20 +2,28 @@ package app.models;
 
 public class NodeStatus {
 
-    private final String jobName;
+    private final SubFractal subFractal;
 
     private final int calculatedPointsCount;
 
-    public NodeStatus(String jobName, int calculatedPointsCount) {
-        this.jobName = jobName;
+    public NodeStatus(SubFractal subFractal, int calculatedPointsCount) {
+        this.subFractal = subFractal;
         this.calculatedPointsCount = calculatedPointsCount;
     }
 
-    public String getJobName() {
-        return jobName;
+    public SubFractal getSubFractal() {
+        return subFractal;
     }
 
     public int getCalculatedPointsCount() {
         return calculatedPointsCount;
+    }
+
+    @Override
+    public String toString() {
+        return "NodeStatus{" +
+                "subFractal=" + subFractal +
+                ", calculatedPointsCount=" + calculatedPointsCount +
+                '}';
     }
 }

@@ -41,7 +41,7 @@ public class BuddyBackupWorker implements Runnable, Cancellable {
             // Sending backup to first buddy
             BuddyBackupMessage buddy1BackupMessage = new BuddyBackupMessage(
                     me.getListenerPort(), firstBuddy.getListenerPort(), me.getIpAddress(),
-                    firstBuddy.getIpAddress(), new JobResult(jobWorker.getJob().getName(), new ArrayList<>(jobWorker.getCalculatedPoints())));
+                    firstBuddy.getIpAddress(), new JobResult(jobWorker.getSubFractal(), new ArrayList<>(jobWorker.getCalculatedPoints())));
 
             MessageUtil.sendMessage(buddy1BackupMessage);
 
@@ -53,7 +53,7 @@ public class BuddyBackupWorker implements Runnable, Cancellable {
 
             BuddyBackupMessage buddy2BackupMessage = new BuddyBackupMessage(
                     me.getListenerPort(), secondBuddy.getListenerPort(), me.getIpAddress(),
-                    secondBuddy.getIpAddress(), new JobResult(jobWorker.getJob().getName(), new ArrayList<>(jobWorker.getCalculatedPoints())));
+                    secondBuddy.getIpAddress(), new JobResult(jobWorker.getSubFractal(), new ArrayList<>(jobWorker.getCalculatedPoints())));
 
             MessageUtil.sendMessage(buddy2BackupMessage);
         }

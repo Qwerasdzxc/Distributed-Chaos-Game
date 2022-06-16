@@ -18,16 +18,14 @@ public class ExecuteJobHandler implements MessageHandler {
         if (clientMessage.getMessageType() == MessageType.EXECUTE_JOB) {
             ExecuteJobMessage executeJobMessage = (ExecuteJobMessage) clientMessage;
 
-            for (ServentInfo node : executeJobMessage.getAssignedNodes()) {
-                AppConfig.assignedJobs.put(node, executeJobMessage.getJob());
-            }
+            AppConfig.assignedNodeSubFractals.putAll(executeJobMessage.getAssignedNodeSubFractals());
 
-            JobExecutionWorker jobExecutionWorker = new JobExecutionWorker(executeJobMessage.getJob(), executeJobMessage.getAssignedStartingPoints());
+            JobExecutionWorker jobExecutionWorker = new JobExecutionWorker(executeJobMessage.getSubFractal(), executeJobMessage.getSubFractal().getSubFractalPositions());
             Thread jobExecution = new Thread(jobExecutionWorker);
             jobExecution.start();
 
             AppConfig.activeJobWorker = jobExecutionWorker;
-            AppConfig.activeJobs.add(executeJobMessage.getJob());
+            AppConfig.activeJobs.add(executeJobMessage.getSubFractal().getJob());
         } else {
             AppConfig.timestampedErrorPrint("EXECUTE_JOB handler got something that is not execute job message.");
         }

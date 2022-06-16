@@ -40,9 +40,9 @@ public class AppConfig {
 	public static Set<Job> activeJobs;
 
 	/**
-	 * Currently assigned jobs for active nodes
+	 * Currently assigned jobs (with sub-fractals) for active nodes
 	 */
-	public static Map<ServentInfo, Job> assignedJobs;
+	public static Map<ServentInfo, SubFractal> assignedNodeSubFractals;
 
 	/**
 	 * Currently active job worker in our node
@@ -305,7 +305,7 @@ public class AppConfig {
 		Thread buddyBackupWorkerThread = new Thread(buddyBackupWorker);
 		buddyBackupWorkerThread.start();
 
-		assignedJobs = new ConcurrentHashMap<>();
+		assignedNodeSubFractals = new ConcurrentHashMap<>();
 		jobResults = new ConcurrentHashMap<>();
 		buddyJobResultBackups = new ConcurrentHashMap<>();
 		nodeStatuses = new ConcurrentHashMap<>();

@@ -7,17 +7,17 @@ public class JobResult implements Serializable {
 
     private static final long serialVersionUID = 5309170042791281555L;
 
-    private final String jobName;
+    private final SubFractal subFractal;
 
     private final List<Point> calculatedPoints;
 
-    public JobResult(String jobName, List<Point> calculatedPoints) {
-        this.jobName = jobName;
+    public JobResult(SubFractal subFractal, List<Point> calculatedPoints) {
+        this.subFractal = subFractal;
         this.calculatedPoints = calculatedPoints;
     }
 
-    public String getJobName() {
-        return jobName;
+    public SubFractal getSubFractal() {
+        return subFractal;
     }
 
     public List<Point> getCalculatedPoints() {

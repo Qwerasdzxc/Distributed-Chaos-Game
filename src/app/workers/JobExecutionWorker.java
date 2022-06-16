@@ -4,6 +4,7 @@ import app.AppConfig;
 import app.Cancellable;
 import app.models.Job;
 import app.models.Point;
+import app.models.SubFractal;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,15 +12,15 @@ import java.util.Random;
 
 public class JobExecutionWorker implements Runnable, Cancellable {
 
-    private final Job job;
+    private final SubFractal subFractal;
 
     private boolean working;
 
     private final List<Point> assignedStartingPoints;
     private final List<Point> calculatedPoints;
 
-    public JobExecutionWorker(Job job, List<Point> assignedStartingPoints) {
-        this.job = job;
+    public JobExecutionWorker(SubFractal subFractal, List<Point> assignedStartingPoints) {
+        this.subFractal = subFractal;
         this.assignedStartingPoints = assignedStartingPoints;
         this.working = true;
         this.calculatedPoints = new ArrayList<>();
@@ -27,7 +28,8 @@ public class JobExecutionWorker implements Runnable, Cancellable {
 
     @Override
     public void run() {
-        AppConfig.timestampedStandardPrint("Executing job: " + job.getName());
+        AppConfig.timestampedStandardPrint("Executing job: " + subFractal.getJob().getName() + " with FID: " + subFractal.getFractalId().getValue());
+        AppConfig.timestampedStandardPrint(assignedStartingPoints.toString());
 
         while (working) {
             Point newPoint = calculatePoint();
@@ -43,14 +45,14 @@ public class JobExecutionWorker implements Runnable, Cancellable {
     @Override
     public void stop() {
         working = false;
-        AppConfig.timestampedStandardPrint("Stopping job: " + job.getName());
+        AppConfig.timestampedStandardPrint("Stopping job: " + subFractal.getJob().getName());
     }
 
     private Point calculatePoint() {
         Random random = new Random();
         if (calculatedPoints.isEmpty()) {
-            int x = random.nextInt(job.getWidth() + 1);
-            int y = random.nextInt(job.getHeight() + 1);
+            int x = random.nextInt(subFractal.getJob().getWidth() + 1);
+            int y = random.nextInt(subFractal.getJob().getHeight() + 1);
 
             return new Point(x, y);
         }
@@ -61,8 +63,8 @@ public class JobExecutionWorker implements Runnable, Cancellable {
         int x = referencePoint.getX();
         int y = referencePoint.getY();
 
-        double proportionalX = x + job.getProportion() * (lastPoint.getX() - x);
-        double proportionalY = y + job.getProportion() * (lastPoint.getY() - y);
+        double proportionalX = x + subFractal.getJob().getProportion() * (lastPoint.getX() - x);
+        double proportionalY = y + subFractal.getJob().getProportion() * (lastPoint.getY() - y);
 
         return new Point((int) proportionalX, (int) proportionalY);
     }
@@ -71,14 +73,14 @@ public class JobExecutionWorker implements Runnable, Cancellable {
         return calculatedPoints;
     }
 
-    public Job getJob() {
-        return job;
+    public SubFractal getSubFractal() {
+        return subFractal;
     }
 
     @Override
     public String toString() {
         return "JobExecutionWorker{" +
-                "job=" + job +
+                "subFractal=" + subFractal +
                 ", working=" + working +
                 '}';
     }

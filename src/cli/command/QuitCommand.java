@@ -40,7 +40,7 @@ public class QuitCommand implements CLICommand {
             if (jobWorker != null) {
                 quitMessage = new QuitMessage(AppConfig.myServentInfo.getListenerPort(),
                         servent.getListenerPort(), AppConfig.myServentInfo.getIpAddress(), servent.getIpAddress(),
-                        jobWorker.getJob().getName(), new ArrayList<>(jobWorker.getCalculatedPoints()));
+                        jobWorker.getSubFractal(), new ArrayList<>(jobWorker.getCalculatedPoints()));
             } else {
                 quitMessage = new QuitMessage(AppConfig.myServentInfo.getListenerPort(),
                         servent.getListenerPort(), AppConfig.myServentInfo.getIpAddress(),

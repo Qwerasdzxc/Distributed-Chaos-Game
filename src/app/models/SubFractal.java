@@ -29,4 +29,13 @@ public class SubFractal implements Serializable {
     public List<Point> getSubFractalPositions() {
         return subFractalPositions;
     }
+
+    @Override
+    public String toString() {
+        return "SubFractal{" +
+                "job=" + job +
+                ", fractalId=" + fractalId +
+                ", subFractalPositions= " + subFractalPositions +
+                '}';
+    }
 }

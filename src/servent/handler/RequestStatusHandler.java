@@ -20,13 +20,21 @@ public class RequestStatusHandler implements MessageHandler {
 
             JobExecutionWorker jobWorker = AppConfig.activeJobWorker;
 
-            if (jobWorker == null || !jobWorker.getJob().getName().equals(requestStatusMessage.getJobName()))
+            AppConfig.timestampedStandardPrint(requestStatusMessage.toString());
+
+            if (jobWorker == null)
+                return;
+
+            if (!requestStatusMessage.isTotal() && !jobWorker.getSubFractal().getJob().equals(requestStatusMessage.getSubFractal().getJob()))
+                return;
+
+            if (!requestStatusMessage.isTotal() && requestStatusMessage.getFid() != null && !jobWorker.getSubFractal().getFractalId().getValue().equals(requestStatusMessage.getFid()))
                 return;
 
             TellStatusMessage tellStatusMessage = new TellStatusMessage(
                     AppConfig.myServentInfo.getListenerPort(), requestStatusMessage.getSenderPort(),
                     AppConfig.myServentInfo.getIpAddress(), requestStatusMessage.getSenderIpAddress(),
-                    jobWorker.getJob().getName(), jobWorker.getCalculatedPoints().size());
+                    jobWorker.getSubFractal(), jobWorker.getCalculatedPoints().size(), requestStatusMessage.getFid(), requestStatusMessage.isTotal());
 
             MessageUtil.sendMessage(tellStatusMessage);
         } else {

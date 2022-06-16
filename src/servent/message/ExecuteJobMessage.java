@@ -3,36 +3,31 @@ package servent.message;
 import app.models.Job;
 import app.models.Point;
 import app.models.ServentInfo;
+import app.models.SubFractal;
 
 import java.util.List;
+import java.util.Map;
 
 public class ExecuteJobMessage extends BasicMessage {
 
     private static final long serialVersionUID = 3899237286642127636L;
 
-    private final Job job;
+    private final SubFractal subFractal;
 
-    private final List<Point> assignedStartingPoints;
+    private final Map<ServentInfo, SubFractal> assignedNodeSubFractals;
 
-    private final List<ServentInfo> assignedNodes;
-
-    public ExecuteJobMessage(int senderPort, int receiverPort, String senderIp, String receiverIp, Job job, List<Point> assignedStartingPoints, List<ServentInfo> assignedNodes) {
+    public ExecuteJobMessage(int senderPort, int receiverPort, String senderIp, String receiverIp, SubFractal subFractal, Map<ServentInfo, SubFractal> assignedNodeSubFractals) {
         super(MessageType.EXECUTE_JOB, senderPort, receiverPort, senderIp, receiverIp);
 
-        this.job = job;
-        this.assignedStartingPoints = assignedStartingPoints;
-        this.assignedNodes = assignedNodes;
+        this.subFractal = subFractal;
+        this.assignedNodeSubFractals = assignedNodeSubFractals;
     }
 
-    public Job getJob() {
-        return job;
+    public SubFractal getSubFractal() {
+        return subFractal;
     }
 
-    public List<Point> getAssignedStartingPoints() {
-        return assignedStartingPoints;
-    }
-
-    public List<ServentInfo> getAssignedNodes() {
-        return assignedNodes;
+    public Map<ServentInfo, SubFractal> getAssignedNodeSubFractals() {
+        return assignedNodeSubFractals;
     }
 }

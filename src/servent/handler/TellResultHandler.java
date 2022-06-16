@@ -16,6 +16,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 public class TellResultHandler implements MessageHandler {
 
@@ -30,16 +32,26 @@ public class TellResultHandler implements MessageHandler {
         if (clientMessage.getMessageType() == MessageType.TELL_RESULT) {
             TellResultMessage tellResultMessage = (TellResultMessage) clientMessage;
 
-            // TODO: Handle the case when we are not the owner of the job (result command called on node without declared jobs)
-            Job job = AppConfig.myServentInfo.getJob(tellResultMessage.getJobName());
+            Optional<Job> job = AppConfig.activeJobs.stream().filter(job1 -> job1.equals(tellResultMessage.getSubFractal().getJob())).findFirst();
+            if (job.isEmpty()) {
+                AppConfig.timestampedStandardPrint("Got TELL_RESULT for job I don't have in system.");
+                return;
+            }
 
             ServentInfo teller = new ServentInfo(tellResultMessage.getSenderIpAddress(), tellResultMessage.getSenderPort());
 
             AppConfig.jobResults.put(teller,
-                    new JobResult(tellResultMessage.getJobName(), tellResultMessage.getCalculatedPoints()));
+                    new JobResult(tellResultMessage.getSubFractal(), tellResultMessage.getCalculatedPoints()));
+
+            if (!tellResultMessage.isTotal()) {
+                AppConfig.jobResults.clear();
+
+                renderImage(tellResultMessage.getSubFractal().getFractalId().getValue(), job.get(), tellResultMessage.getCalculatedPoints());
+                AppConfig.timestampedStandardPrint("Generated PNG for job: " + job.get().getName() + " for FID: " + tellResultMessage.getSubFractal().getFractalId().getValue());
+            }
 
             // TODO: Handle nested fractals
-            if (job.getN() == AppConfig.jobResults.size()) {
+            if (job.get().getN() == AppConfig.jobResults.size()) {
                 List<Point> mergedPoints = new ArrayList<>();
                 for (JobResult jobResult : AppConfig.jobResults.values()) {
                     mergedPoints.addAll(jobResult.getCalculatedPoints());
@@ -47,15 +59,19 @@ public class TellResultHandler implements MessageHandler {
 
                 AppConfig.jobResults.clear();
 
-                renderImage(AppConfig.myServentInfo.getListenerPort(), job, mergedPoints);
-                AppConfig.timestampedStandardPrint("Generated PNG for job: " + job.getName());
+                renderImage(job.get(), mergedPoints);
+                AppConfig.timestampedStandardPrint("Generated PNG for job: " + job.get().getName());
             }
         } else {
             AppConfig.timestampedErrorPrint("TELL_RESULT handler got something that is not tell result message.");
         }
     }
 
-    public static void renderImage(int port, Job job, List<Point> points) {
+    public static void renderImage(Job job, List<Point> points) {
+        renderImage("total", job, points);
+    }
+
+    public static void renderImage(String fid, Job job, List<Point> points) {
         BufferedImage image = new BufferedImage(job.getWidth(), job.getHeight(), BufferedImage.TYPE_3BYTE_BGR);
         WritableRaster writableRaster = image.getRaster();
         int[] rgb = new int[3];
@@ -68,7 +84,7 @@ public class TellResultHandler implements MessageHandler {
                 BufferedImage.TYPE_3BYTE_BGR);
         newImage.setData(writableRaster);
         try {
-            File file = new File("chaos/fractals/" + job.getName() + "_" + job.getProportion() + "_" + port + ".png");
+            File file = new File("chaos/fractals/" + job.getName() + "_" + job.getProportion() + "_" + fid + ".png");
             if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
             }

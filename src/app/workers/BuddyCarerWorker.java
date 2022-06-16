@@ -82,7 +82,7 @@ public class BuddyCarerWorker implements Runnable, Cancellable {
         JobExecutionWorker jobWorker = AppConfig.activeJobWorker;
         if (jobWorker != null) {
             JobResult lastBuddyBackup = AppConfig.buddyJobResultBackups.get(buddy);
-            if (lastBuddyBackup != null && jobWorker.getJob().getName().equals(lastBuddyBackup.getJobName())) {
+            if (lastBuddyBackup != null && jobWorker.getSubFractal().getJob().equals(lastBuddyBackup.getSubFractal().getJob())) {
                 jobWorker.getCalculatedPoints().addAll(lastBuddyBackup.getCalculatedPoints());
 
                 AppConfig.timestampedStandardPrint("I took over calculated points from node: " + buddy.getListenerPort());
