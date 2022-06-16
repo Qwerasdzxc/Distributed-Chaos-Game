@@ -16,5 +16,7 @@ pause 5000
 result square 3
 pause 5000
 result square
+pause 10000
+stop square
 pause 600000
 stop

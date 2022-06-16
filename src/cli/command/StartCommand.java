@@ -76,36 +76,65 @@ public class StartCommand implements CLICommand {
             job = new Job(name, n, width, height, proportion, positions);
         }
 
-        int nodeCountForJob = getNodeCountForJob(AppConfig.activeNodes.size(), job);
-        AppConfig.timestampedStandardPrint("We will use " + nodeCountForJob + " nodes for this job.");
+        List<Job> jobs = new ArrayList<>(AppConfig.activeJobs);
+        jobs.add(job);
 
         ServentInfo me = AppConfig.myServentInfo;
+        Map<Job, List<ServentInfo>> nodesForJobs = getNodesForJobsMap(AppConfig.activeNodes, jobs);
         Map<ServentInfo, SubFractal> assignedNodeSubFractals = new HashMap<>();
 
-        if (nodeCountForJob < job.getN()) {
-            SubFractal subFractal = new SubFractal(job, new FractalId("0"), job.getPositions());
-            assignedNodeSubFractals.put(me, subFractal);
-            ExecuteJobMessage executeJobMessage = new ExecuteJobMessage(me.getListenerPort(), me.getListenerPort(),
-                    me.getIpAddress(), me.getIpAddress(), subFractal, assignedNodeSubFractals);
+        AppConfig.timestampedStandardPrint(nodesForJobs.toString());
+
+        for (Map.Entry<Job, List<ServentInfo>> entry : nodesForJobs.entrySet()) {
+            job = entry.getKey();
+            int nodeCountForJob = getNodeCountForJob(entry.getValue().size(), job);
+            AppConfig.timestampedStandardPrint("We will use " + nodeCountForJob + " nodes for job: " + job.getName());
+
+            if (nodeCountForJob < job.getN()) {
+                ServentInfo soleWorker = entry.getValue().get(0);
+                SubFractal subFractal = new SubFractal(job, new FractalId("0"), job.getPositions());
+                assignedNodeSubFractals.put(soleWorker, subFractal);
+
+                continue;
+            }
+
+            List<SubFractal> subFractals = getFractalIds(nodeCountForJob, job);
+
+            for (int i = 0; i < subFractals.size(); i ++) {
+                ServentInfo workerNode = AppConfig.activeNodes.get(i);
+                assignedNodeSubFractals.put(workerNode, subFractals.get(i));
+            }
+        }
+
+        for (Map.Entry<ServentInfo, SubFractal> subEntry : assignedNodeSubFractals.entrySet()) {
+            ExecuteJobMessage executeJobMessage = new ExecuteJobMessage(me.getListenerPort(), subEntry.getKey().getListenerPort(),
+                    me.getIpAddress(), subEntry.getKey().getIpAddress(), subEntry.getValue(), assignedNodeSubFractals);
 
             MessageUtil.sendMessage(executeJobMessage);
-            return;
+        }
+    }
+
+    Map<Job, List<ServentInfo>> getNodesForJobsMap(List<ServentInfo> nodes, List<Job> jobs) {
+        Map<Job, List<ServentInfo>> nodesForJobs = new HashMap<>();
+        int minNodeCount = nodes.size() / jobs.size();
+        int leftover = nodes.size() % jobs.size();
+
+        for (int i = 0; i < jobs.size(); i ++) {
+            List<ServentInfo> nodesForJob = new ArrayList<>();
+
+            for (int j = i * minNodeCount; j < i * minNodeCount + minNodeCount; j ++) {
+                nodesForJob.add(nodes.get(j));
+            }
+
+            if (leftover > 0) {
+                nodesForJob.add(nodes.get(nodes.size() - leftover));
+                leftover --;
+            }
+
+            nodesForJobs.put(jobs.get(i), nodesForJob);
         }
 
-        List<SubFractal> subFractals = getFractalIds(nodeCountForJob, job);
-
-        AppConfig.timestampedStandardPrint(subFractals.toString());
-        for (int i = 0; i < subFractals.size(); i ++) {
-            ServentInfo workerNode = AppConfig.activeNodes.get(i);
-            assignedNodeSubFractals.put(workerNode, subFractals.get(i));
-        }
-
-        for (Map.Entry<ServentInfo, SubFractal> entry : assignedNodeSubFractals.entrySet()) {
-            ExecuteJobMessage executeJobMessage = new ExecuteJobMessage(me.getListenerPort(), entry.getKey().getListenerPort(),
-                    me.getIpAddress(), entry.getKey().getIpAddress(), entry.getValue(), assignedNodeSubFractals);
-
-            MessageUtil.sendMessage(executeJobMessage);
-        }
+        return nodesForJobs;
     }
 
     private List<Point> getStartingPointsForIndex(int pointIndex, List<Point> points, double proportion) {
