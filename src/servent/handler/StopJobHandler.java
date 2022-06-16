@@ -6,7 +6,9 @@ import app.models.SubFractal;
 import app.workers.JobExecutionWorker;
 import servent.message.Message;
 import servent.message.MessageType;
+import servent.message.StopJobAckMessage;
 import servent.message.StopJobMessage;
+import servent.message.util.MessageUtil;
 
 import java.util.Map;
 
@@ -31,13 +33,13 @@ public class StopJobHandler implements MessageHandler {
                 AppConfig.jobResults.clear();
             }
 
-            AppConfig.activeJobs.remove(stopJobMessage.getJob());
+            AppConfig.activeJobs.clear();
+            AppConfig.assignedNodeSubFractals.clear();
 
-            for (Map.Entry<ServentInfo, SubFractal> assignedJob : AppConfig.assignedNodeSubFractals.entrySet()) {
-                if (assignedJob.getValue().getJob().equals(stopJobMessage.getJob())) {
-                    assignedJob.setValue(null);
-                }
-            }
+            StopJobAckMessage stopJobAckMessage = new StopJobAckMessage(AppConfig.myServentInfo.getListenerPort(),
+                    stopJobMessage.getSenderPort(), AppConfig.myServentInfo.getIpAddress(), stopJobMessage.getSenderIpAddress(), stopJobMessage.getJob());
+
+            MessageUtil.sendMessage(stopJobAckMessage);
         } else {
             AppConfig.timestampedErrorPrint("STOP_JOB handler got something that is not stop job message.");
         }

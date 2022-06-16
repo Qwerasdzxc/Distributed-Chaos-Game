@@ -53,11 +53,7 @@ public class Job implements Serializable {
     @Override
     public String toString() {
         return "Job{" +
-                "name='" + name + '\'' +
-                ", n=" + n +
-                ", width=" + width +
-                ", height=" + height +
-                ", proportion=" + proportion +
+                "name='" + name +
                 '}';
     }
 

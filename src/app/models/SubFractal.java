@@ -35,7 +35,6 @@ public class SubFractal implements Serializable {
         return "SubFractal{" +
                 "job=" + job +
                 ", fractalId=" + fractalId +
-                ", subFractalPositions= " + subFractalPositions +
                 '}';
     }
 }

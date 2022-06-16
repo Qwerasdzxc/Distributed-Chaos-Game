@@ -70,6 +70,11 @@ public class AppConfig {
 	public static Map<ServentInfo, JobResult> jobResults;
 
 	/**
+	 * Accumulating received StopJobAck messages
+	 */
+	public static Map<ServentInfo, Job> stopJobAcks;
+
+	/**
 	 * Storing received backup JobResults from my Buddies
 	 */
 	public static Map<ServentInfo, JobResult> buddyJobResultBackups;
@@ -309,6 +314,7 @@ public class AppConfig {
 		jobResults = new ConcurrentHashMap<>();
 		buddyJobResultBackups = new ConcurrentHashMap<>();
 		nodeStatuses = new ConcurrentHashMap<>();
+		stopJobAcks = new ConcurrentHashMap<>();
 		buddyNodesSuspicionStatus = new ConcurrentHashMap<>();
 		buddyNodesLastPongTime = new ConcurrentHashMap<>();
 		activeJobs = new HashSet<>();

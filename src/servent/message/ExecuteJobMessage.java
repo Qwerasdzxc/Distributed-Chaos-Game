@@ -30,4 +30,12 @@ public class ExecuteJobMessage extends BasicMessage {
     public Map<ServentInfo, SubFractal> getAssignedNodeSubFractals() {
         return assignedNodeSubFractals;
     }
+
+    @Override
+    public String toString() {
+        return super.toString() + "ExecuteJobMessage{" +
+                "subFractal=" + subFractal +
+                ", assignedNodeSubFractals=" + assignedNodeSubFractals +
+                '}';
+    }
 }
